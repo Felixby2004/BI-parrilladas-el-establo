@@ -79,12 +79,13 @@ El flujo HTTP de PostgreSQL usa rollback: no deja clientes ni cobros de prueba e
 
 ## Despliegue (Dokploy)
 
-El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI y frontend Nginx. El frontend publica un solo puerto y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS.
+El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend publica un solo puerto y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS.
 
 1. Crear una aplicación de tipo **Compose** en Dokploy y apuntar al repositorio; archivo de compose: `docker-compose.dokploy.yml`.
 2. Copiar `.env.production.example` a `.env` en el servidor (o cargar las variables en la UI de Dokploy):
    - `POSTGRES_USER`, `POSTGRES_PASSWORD` (solo alfanumérica), `POSTGRES_DB`.
    - `SECRET_KEY` generada con `openssl rand -hex 32`.
+   - `MSSQL_SA_PASSWORD` para el servicio de BI (ver sección SQL Server para BI).
    - `MP_ACCESS_TOKEN` y `MP_WEBHOOK_URL` solo si se usará Mercado Pago.
    - `WEB_PORT` (por defecto 3000) es el puerto del host que Dokploy publica.
 3. Asignar el dominio en Dokploy al servicio `web`, puerto `80`, con certificado Let's Encrypt.
@@ -99,14 +100,13 @@ Notas:
 - No ejecutar `seeds/seed_leads.py` en producción: carga contactos de demostración.
 - `ENVIRONMENT=production` desactiva `create_all` y el endpoint `simular-aprobacion`; el esquema lo controla Alembic.
 
-## SQL Server para BI (opcional, Dokploy)
+## SQL Server para BI (mismo stack, Dokploy)
 
-El esquema `db/oltp_elestablo_v1.sql` es T-SQL para SQL Server y se despliega como stack aparte del stack de la aplicación. No reemplaza al PostgreSQL 18 de `docker-compose.dokploy.yml`.
+El esquema `db/oltp_elestablo_v1.sql` es T-SQL para SQL Server y corre en el servicio `mssql` del mismo `docker-compose.dokploy.yml`. No reemplaza al PostgreSQL 18 del servicio `db`.
 
-1. Crear un servicio **Compose** en Dokploy con el mismo repositorio y *Compose Path* `docker-compose.mssql.yml`.
-2. Cargar `MSSQL_SA_PASSWORD` en el entorno de Dokploy. Debe tener 8+ caracteres con mayúscula, minúscula, número y símbolo, o el contenedor no arranca. Si contiene `$`, escaparlo como `$$`.
-3. Desplegar. El contenedor escucha en `127.0.0.1:1433` del host, no en la IP pública.
-4. Importar el esquema una sola vez (el script es idempotente):
+1. Cargar `MSSQL_SA_PASSWORD` en el entorno de Dokploy, junto a las demás variables. Debe tener 8+ caracteres con mayúscula, minúscula, número y símbolo, o el contenedor no arranca. Si contiene `$`, escaparlo como `$$`.
+2. Desplegar. El contenedor escucha en `127.0.0.1:1433` del host, no en la IP pública.
+3. Importar el esquema una sola vez (el script es idempotente):
 
    ```bash
    docker compose exec mssql bash -c \
@@ -115,14 +115,15 @@ El esquema `db/oltp_elestablo_v1.sql` es T-SQL para SQL Server y se despliega co
 
    `-f 65001` es obligatorio: el archivo es UTF-8 sin BOM y sin eso se corrompen los acentos.
 
-5. Conectar desde fuera con túnel SSH: `ssh -L 1433:127.0.0.1:1433 root@vmi3492739` y apuntar la herramienta BI a `localhost,1433` con usuario `sa`.
+4. Conectar desde fuera con túnel SSH: `ssh -L 1433:127.0.0.1:1433 root@vmi3492739` y apuntar la herramienta BI o SSMS a `localhost,1433` con usuario `sa`.
 
 Notas:
 
 - RAM: el contenedor está limitado a 2 GB (`MSSQL_MEMORY_LIMIT_MB`). SQL Server no arranca con menos de 2 GB.
 - Edición `Developer`: gratis, sin límite de tamaño, pero sin licencia para producción comercial. Para uso interno de BI es válida.
 - Los datos viven en el volumen `mssql_data`. Respaldo: `docker compose exec mssql bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "BACKUP DATABASE database_parrilla TO DISK = N\"/var/opt/mssql/backup/parrilla.bak\""'`.
-- El stack no tiene dominio asignado ni puerto público: el acceso es solo por túnel.
+- El servicio no tiene dominio asignado ni puerto público: el acceso es solo por túnel.
+- `MSSQL_SA_PASSWORD` solo se aplica al inicializar el volumen. Cambiarla después no altera la contraseña existente.
 
 ## Configuración y límites
 
