@@ -95,7 +95,7 @@ El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, fron
 
 Notas:
 
-- Los datos viven en el volumen `postgres_data`. Programar respaldos con `docker exec <db> pg_dump -U $POSTGRES_USER $POSTGRES_DB > respaldo.sql`.
+- Los datos viven en el volumen `pg18_data` (el antiguo `postgres_data` tenía datos legacy de Postgres 15 y no es compatible con 18; se conserva como respaldo). Programar respaldos con `docker exec <db> pg_dump -U $POSTGRES_USER $POSTGRES_DB > respaldo.sql`.
 - No se incluye pgAdmin en producción (el `docker-compose.yml` local lo mantiene).
 - No ejecutar `seeds/seed_leads.py` en producción: carga contactos de demostración.
 - `ENVIRONMENT=production` desactiva `create_all` y el endpoint `simular-aprobacion`; el esquema lo controla Alembic.

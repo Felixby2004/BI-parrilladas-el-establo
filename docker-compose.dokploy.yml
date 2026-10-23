@@ -14,7 +14,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       # En postgres:18 PGDATA vive dentro de /var/lib/postgresql/<major>/docker.
-      - postgres_data:/var/lib/postgresql
+      # El volumen se llama pg18_data a propósito: `postgres_data` guarda datos
+      # legacy de Postgres 15 en su raíz y el entrypoint de 18 lo rechaza.
+      - pg18_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -77,5 +79,5 @@ services:
           memory: 2560m
 
 volumes:
-  postgres_data:
+  pg18_data:
   mssql_data:
