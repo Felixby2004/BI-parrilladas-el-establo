@@ -141,16 +141,16 @@ export const CATALOGO_MOCK: ProductoCatalogo[] = [
 ]
 
 export const TERMINOS_COCCION: Record<string, string> = {
-  ingles:      '🩸 Inglés (55°C)',
-  tres_cuartos:'🟡 Tres cuartos (65°C)',
-  bien_cocido: '⬛ Bien cocido (75°C)',
-  a_punto:     '🟠 A punto (60°C)',
+  ingles:      'Inglés (55 °C)',
+  tres_cuartos:'Tres cuartos (65 °C)',
+  bien_cocido: 'Bien cocido (75 °C)',
+  a_punto:     'A punto (60 °C)',
 }
 
 export const OCASIONES: Record<string, string> = {
-  cumpleanos: '🎂 Cumpleaños',
-  aniversario: '💑 Aniversario',
-  empresa: '🏢 Evento empresarial',
-  ninguna: '🍖 Comida casual',
-  otro: '✨ Otro',
+  cumpleanos: 'Cumpleaños',
+  aniversario: 'Aniversario',
+  empresa: 'Evento empresarial',
+  ninguna: 'Comida casual',
+  otro: 'Otro',
 }

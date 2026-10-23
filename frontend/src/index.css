@@ -1,187 +1,261 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Reset ───────────────────────────────────────────── */
+/* ─── Reset & base ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
+html { scroll-behavior: smooth; color-scheme: dark; }
 body {
-  @apply bg-dark-900 text-white font-sans antialiased;
-  background-image: theme('backgroundImage.grill-pattern');
-  min-height: 100vh;
+  @apply bg-dark-950 text-arena-100 font-sans antialiased;
+  min-height: 100dvh;
+  background-color: #0c0a09;
+  background-image:
+    radial-gradient(ellipse 70% 48% at 12% -8%, rgba(127, 1, 31, 0.22), transparent 62%),
+    radial-gradient(ellipse 52% 44% at 102% 4%, rgba(201, 162, 90, 0.07), transparent 58%),
+    url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F5EBD0' fill-opacity='0.022'%3E%3Crect x='0' y='0' width='1' height='48'/%3E%3Crect x='0' y='0' width='48' height='1'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#root { position: relative; z-index: 1; min-height: 100dvh; }
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: #7F011F; color: #F5EBD0; }
+:focus-visible { outline: 2px solid rgba(201, 162, 90, 0.7); outline-offset: 2px; }
 
-/* ─── CSS Variables (Design tokens) ────────────────────── */
+/* ─── Design tokens ────────────────────────────────────── */
 :root {
-  --color-primary:   #7F011F;
-  --color-primary-h: #a31a42;
-  --color-arena:     #F5EBD0;
-  --color-arena-dim: #edd9a8;
-  --color-dark:      #0d0909;
-  --color-card:      #1c1010;
-  --color-border:    #2e1a1a;
+  --ink-950: #080605;
+  --ink-900: #0C0A09;
+  --ink-800: #12100E;
+  --ink-700: #191512;
+  --wine-900: #7F011F;
+  --wine-700: #86182d;
+  --gold-500: #c9a25a;
+  --bone-200: #F5EBD0;
+  --text-primary: #F6EFE6;
+  --text-secondary: #C3B5A6;
+  --ring: rgba(201, 162, 90, 0.28);
 }
 
-/* ─── Scrollbar ─────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #150c0c; }
-::-webkit-scrollbar-thumb { background: #4f2f2f; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #7F011F; }
+/* ─── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3a302a; border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: #6e1224; background-clip: padding-box; }
 
-/* ─── Componentes globales ──────────────────────────────── */
+/* ─── Componentes globales ─────────────────────────────── */
 @layer components {
 
   /* ── Botones ─────────────────────────────────────── */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold
-           bg-vino-gradient text-arena-200
-           shadow-glow-vino-sm
-           hover:shadow-glow-vino hover:brightness-110
-           active:scale-95 active:brightness-90
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5
+           text-sm font-semibold tracking-wide text-arena-50
+           bg-vino-900 border border-vino-600/40 shadow-glow-vino-sm
+           hover:bg-vino-700 hover:border-vino-500/60 hover:shadow-glow-vino
+           active:translate-y-px active:brightness-95
+           disabled:opacity-45 disabled:pointer-events-none
            transition-all duration-200 cursor-pointer;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold
-           bg-dark-500 border border-dark-300 text-arena-300
-           hover:bg-dark-400 hover:border-vino-700 hover:text-arena-200
-           active:scale-95
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5
+           text-sm font-semibold text-arena-200
+           bg-dark-700/80 border border-arena-200/10
+           hover:bg-dark-600 hover:border-arena-200/20 hover:text-arena-50
+           active:translate-y-px
+           disabled:opacity-45 disabled:pointer-events-none
            transition-all duration-200 cursor-pointer;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium
-           text-arena-300/60
-           hover:text-arena-200 hover:bg-dark-500
-           active:scale-95
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+           text-sm font-medium text-arena-300/70
+           hover:text-arena-100 hover:bg-arena-200/[0.06]
+           active:translate-y-px
            transition-all duration-200 cursor-pointer;
   }
 
   .btn-arena {
-    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold
-           bg-arena-200 text-vino-900
-           hover:bg-arena-300
-           active:scale-95
-           transition-all duration-200 cursor-pointer shadow-glow-arena;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5
+           text-sm font-bold text-dark-950 bg-gold-gradient border border-gold-300/50
+           shadow-glow-gold hover:brightness-105
+           active:translate-y-px
+           disabled:opacity-45 disabled:pointer-events-none
+           transition-all duration-200 cursor-pointer;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center justify-center rounded-xl border border-arena-200/10
+           bg-dark-700/70 text-arena-300 hover:text-arena-100 hover:bg-dark-600
+           transition-all duration-200 cursor-pointer;
   }
 
   /* ── Cards ───────────────────────────────────────── */
   .card {
-    @apply bg-dark-700 border border-dark-400 rounded-2xl p-5 shadow-card
-           transition-all duration-200;
+    @apply relative rounded-[20px] border border-arena-200/[0.07]
+           bg-dark-800/80 p-5 shadow-card backdrop-blur-sm;
   }
 
   .card-hover {
-    @apply hover:border-vino-800 hover:shadow-card-hover hover:-translate-y-0.5 hover:shadow-inner-vino;
+    @apply hover:border-vino-700/50 hover:shadow-card-hover hover:-translate-y-0.5
+           transition-all duration-300;
   }
 
   /* ── Inputs ──────────────────────────────────────── */
   .input-field {
-    @apply w-full bg-dark-600 border border-dark-300 rounded-xl px-4 py-3
-           text-arena-200 placeholder-dark-300/80 text-sm
-           focus:outline-none focus:border-vino-700 focus:ring-1 focus:ring-vino-700/50
-           transition-colors duration-200;
+    @apply w-full rounded-xl border border-arena-200/10 bg-dark-900/60 px-4 py-3
+           text-sm text-arena-100 placeholder:text-arena-400/40 outline-none
+           focus:border-vino-500/70 focus:ring-2 focus:ring-vino-600/20
+           disabled:opacity-50
+           transition-all duration-200;
   }
 
   .label {
-    @apply block text-[10px] font-bold text-arena-400/60 uppercase tracking-widest mb-1.5;
+    @apply block text-[10.5px] font-bold uppercase tracking-[0.16em]
+           text-arena-400/80 mb-2;
   }
 
-  /* ── Badges de estado lead ───────────────────────── */
-  .badge { @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border; }
-  .badge-nuevo      { @apply bg-blue-500/15   text-blue-300   border-blue-500/25;   }
-  .badge-contactado { @apply bg-yellow-500/15 text-yellow-300 border-yellow-500/25; }
-  .badge-respondio  { @apply bg-purple-500/15 text-purple-300 border-purple-500/25; }
-  .badge-ganado     { @apply bg-green-500/15  text-green-300  border-green-500/25;  }
-  .badge-perdido    { @apply bg-red-500/15    text-red-400    border-red-500/25;     }
-  .badge-vino       { @apply bg-vino-900/30   text-arena-300  border-vino-700/40;   }
+  .input-field::-webkit-calendar-picker-indicator { filter: invert(0.75); opacity: 0.55; }
+
+  /* ── Badges de estado ────────────────────────────── */
+  .badge { @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-semibold border; }
+  .badge-nuevo      { @apply bg-[#6F9FC4]/12 text-[#A8C6E0] border-[#6F9FC4]/25; }
+  .badge-contactado { @apply bg-gold-500/12 text-gold-300 border-gold-500/25; }
+  .badge-respondio  { @apply bg-[#B58AC9]/12 text-[#D2B6E2] border-[#B58AC9]/25; }
+  .badge-ganado     { @apply bg-sage-500/12 text-sage-300 border-sage-500/25; }
+  .badge-perdido    { @apply bg-[#C46666]/12 text-[#E0A3A3] border-[#C46666]/25; }
 
   /* ── Kanban ──────────────────────────────────────── */
   .kanban-col {
-    @apply flex flex-col gap-3 min-h-[200px] p-3 rounded-2xl
-           bg-dark-800 border border-dark-400;
-    min-width: 272px;
-    width: 272px;
+    @apply flex flex-col gap-3 min-h-[240px] p-3.5 rounded-[20px]
+           border border-arena-200/[0.06] bg-dark-800/55 backdrop-blur-sm;
+    min-width: 296px;
+    width: 296px;
     flex-shrink: 0;
+    scroll-snap-align: start;
   }
 
   .kanban-col-header {
-    @apply flex items-center justify-between mb-1 pb-3 border-b border-dark-400;
+    @apply flex items-start justify-between gap-2 pb-3 border-b border-arena-200/[0.07];
   }
 
-  /* ── Lead Card ───────────────────────────────────── */
   .lead-card {
-    @apply bg-dark-700 border border-dark-400 rounded-xl p-4
-           hover:border-vino-800/70 hover:-translate-y-0.5 hover:shadow-card-hover hover:shadow-inner-vino
+    @apply relative rounded-2xl border border-arena-200/[0.07] bg-dark-700/70 p-4
+           hover:border-vino-700/60 hover:bg-dark-700 hover:-translate-y-0.5 hover:shadow-card-hover
            transition-all duration-200 cursor-pointer animate-fade-in;
   }
 
-  /* ── Sidebar item ────────────────────────────────── */
-  .sidebar-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl
-           text-arena-300/50 font-medium text-sm
-           hover:bg-dark-500 hover:text-arena-200
-           transition-all duration-200 cursor-pointer;
-  }
-
-  .sidebar-item.active {
-    @apply bg-vino-900/30 border border-vino-800/50 text-arena-200;
-    box-shadow: inset 0 0 20px rgba(127,1,31,0.1);
-  }
-
   /* ── Páginas ─────────────────────────────────────── */
-  .page-title   { @apply text-2xl font-display font-bold text-arena-200; }
-  .page-subtitle { @apply text-sm text-arena-300/50 mt-1; }
-  .page-header  { @apply mb-8; }
+  .page-title   { @apply font-display text-[clamp(1.55rem,2.4vw,2rem)] font-semibold leading-[1.12] tracking-[-0.02em] text-arena-50; }
+  .page-subtitle { @apply text-[13px] leading-relaxed text-arena-300/60 mt-1.5 max-w-2xl; }
+  .page-header  { @apply mb-7; }
+  .eyebrow      { @apply text-[10.5px] font-bold uppercase tracking-[0.2em] text-gold-500/90; }
 
   /* ── Mesa card ───────────────────────────────────── */
   .mesa-card {
-    @apply relative flex flex-col items-center justify-center
-           aspect-square rounded-2xl border-2 cursor-pointer
-           transition-all duration-200 font-display;
+    @apply relative flex flex-col items-center justify-center gap-1
+           min-h-[132px] rounded-2xl border p-4 cursor-pointer
+           transition-all duration-200;
   }
-  .mesa-disponible  { @apply bg-dark-700 border-dark-400 hover:border-green-600 hover:bg-green-900/10; }
-  .mesa-ocupada     { @apply bg-vino-900/20 border-vino-800 shadow-glow-vino-sm; }
-  .mesa-reservada   { @apply bg-yellow-900/20 border-yellow-700; }
-  .mesa-mantenimiento { @apply bg-dark-600 border-dark-300 opacity-50; }
+  .mesa-disponible   { @apply bg-dark-800/60 border-arena-200/10 hover:border-sage-500/50 hover:bg-sage-500/[0.06]; }
+  .mesa-ocupada      { @apply bg-vino-950/35 border-vino-700/50 hover:border-vino-500/70; }
+  .mesa-reservada    { @apply bg-gold-500/[0.07] border-gold-500/35 hover:border-gold-400/60; }
+  .mesa-mantenimiento{ @apply bg-dark-800/40 border-arena-200/[0.06] opacity-55; }
 
-  /* ── Comanda card (cocina) ───────────────────────── */
+  /* ── Comanda card ────────────────────────────────── */
   .comanda-card {
-    @apply card border-l-4 transition-all duration-300;
+    @apply relative rounded-[20px] border border-arena-200/[0.07] bg-dark-800/80 p-5 shadow-card
+           border-l-[3px] transition-all duration-300;
   }
-  .comanda-normal  { @apply border-l-dark-300; }
-  .comanda-urgente { @apply border-l-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.2)]; }
-  .comanda-vip     { @apply border-l-vino-700 shadow-glow-vino-sm; }
+  .comanda-normal  { @apply border-l-arena-200/15; }
+  .comanda-urgente { @apply border-l-gold-500/80; }
+  .comanda-vip     { @apply border-l-vino-600; }
 
   /* ── Stat card ───────────────────────────────────── */
   .stat-card {
-    @apply card card-hover flex flex-col gap-2 relative overflow-hidden;
+    @apply relative overflow-hidden rounded-[20px] border border-arena-200/[0.07]
+           bg-dark-800/75 p-4 shadow-card backdrop-blur-sm
+           transition-all duration-300 hover:border-arena-200/[0.13];
   }
 
-  /* ── Stitch & Glassmorphism ──────────────────────── */
-  .glass-panel {
-    @apply bg-dark-800/85 backdrop-blur-md border border-dark-400/80 shadow-card;
+  /* ── Formulario público (panel crema) ────────────── */
+  .booking-panel {
+    background:
+      radial-gradient(ellipse 70% 50% at 90% 0%, rgba(201, 162, 90, 0.16), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 0% 100%, rgba(127, 1, 31, 0.07), transparent 60%),
+      #f7efe2;
+    color: #241b17;
   }
 
-  .glass-card {
-    @apply bg-dark-700/90 backdrop-blur-sm border border-dark-400/90 rounded-2xl p-5 shadow-card transition-all duration-300;
+  .booking-label {
+    @apply block text-[10.5px] font-bold uppercase tracking-[0.16em]
+           text-[#8b7058] mb-2;
   }
 
-  .glass-card-hover {
-    @apply hover:border-vino-700/60 hover:shadow-card-hover hover:bg-dark-700/95;
+  .booking-input {
+    @apply w-full rounded-xl border border-[#d8c7ad] bg-white/80 px-4 py-3
+           text-sm text-[#241b17] placeholder:text-[#9a8775] outline-none
+           focus:border-[#7F011F] focus:ring-2 focus:ring-[#7F011F]/15
+           transition-all duration-200;
   }
 
-  .stitch-pill {
-    @apply px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2;
+  .booking-input::-webkit-calendar-picker-indicator { filter: none; opacity: 0.55; }
+
+  .booking-option {
+    @apply flex items-start gap-3 rounded-xl border p-3.5 text-left
+           transition-all duration-200 cursor-pointer;
   }
 
-  .stitch-pill-active {
-    @apply bg-vino-gradient text-white shadow-glow-vino-sm border border-vino-600/50;
+  .booking-option-idle {
+    @apply border-[#ddcdb6] bg-white/45 hover:bg-white/80 hover:border-[#c9b294];
   }
 
-  .stitch-pill-inactive {
-    @apply bg-dark-600 text-arena-300/70 hover:text-white hover:bg-dark-500 border border-dark-400/60;
+  .booking-option-active {
+    @apply border-[#7F011F] bg-white shadow-[0_10px_30px_-20px_rgba(127,1,31,0.65)] ring-1 ring-[#7F011F];
+  }
+
+  /* ── Utilidades ──────────────────────────────────── */
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* ─── Print: sólo comprobante ──────────────────────────── */
+@media print {
+  body { background: #fff !important; }
+  body::before { display: none !important; }
+  body * { visibility: hidden; }
+  .receipt-paper, .receipt-paper * { visibility: visible; }
+  .receipt-paper {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: 100%;
+    max-width: 420px;
+    height: fit-content;
+    background: #fff !important;
+    color: #111 !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  .receipt-paper .receipt-muted { color: #555 !important; }
+  .receipt-paper .receipt-line { border-color: #ccc !important; }
+}
+
+/* ─── Movimiento reducido ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

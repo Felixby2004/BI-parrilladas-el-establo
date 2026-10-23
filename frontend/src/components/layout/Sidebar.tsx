@@ -1,143 +1,184 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { clsx } from 'clsx'
+import {
+  ArrowUpRight,
+  CreditCard,
+  Flame,
+  Globe2,
+  Megaphone,
+  Star,
+  Target,
+  UtensilsCrossed,
+  X,
+  type LucideIcon,
+} from 'lucide-react'
 
 interface NavItem {
-  phase: string; label: string; icon: string
-  description: string; path: string
-  disabled?: boolean; gradient: string
+  phase: string
+  label: string
+  icon: LucideIcon
+  description: string
+  path: string
+  disabled?: boolean
 }
 
 const navItems: NavItem[] = [
-  { phase: 'B', label: 'BUYERS',    icon: '📣', description: 'Captación & Marketing', path: '/buyers',    gradient: 'from-blue-600 to-indigo-700'    },
-  { phase: 'L', label: 'LEADS',     icon: '🎯', description: 'Negociación & Pedidos', path: '/leads',     gradient: 'from-yellow-600 to-amber-700'    },
-  { phase: 'P', label: 'PAYERS',    icon: '💳', description: 'Caja & Cobros',         path: '/payers',    gradient: 'from-green-600 to-emerald-700'   },
-  { phase: 'C', label: 'CUSTOMERS', icon: '🍽️', description: 'Servicio en Salón',    path: '/customers', gradient: 'from-purple-600 to-violet-700'   },
-  { phase: 'T', label: 'TURNED',    icon: '⭐', description: 'Próximamente',          path: '/turned',    gradient: 'from-dark-400 to-dark-500', disabled: true },
+  { phase: 'B', label: 'Buyers',    icon: Megaphone,       description: 'Captación y campañas',    path: '/buyers' },
+  { phase: 'L', label: 'Leads',     icon: Target,          description: 'Negociación y pedidos',   path: '/leads' },
+  { phase: 'P', label: 'Payers',    icon: CreditCard,      description: 'Caja y cobros',           path: '/payers' },
+  { phase: 'C', label: 'Customers', icon: UtensilsCrossed, description: 'Servicio en salón',       path: '/customers' },
+  { phase: 'T', label: 'Turned',    icon: Star,            description: 'Fidelización',            path: '/turned', disabled: true },
 ]
 
-export function Sidebar() {
+export function Sidebar({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
   const location = useLocation()
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col"
-      style={{ background: 'linear-gradient(180deg, #150c0c 0%, #0d0909 100%)', borderRight: '1px solid #2e1a1a' }}>
-
-      {/* ── Logo ─────────────────────────────────────── */}
-      <div className="flex items-center gap-3 px-5 py-5" style={{ borderBottom: '1px solid #2e1a1a' }}>
-        <div className="relative">
-          <img
-            src="/images/logo_establo.jpg"
-            alt="Parrilladas El Establo"
-            className="w-12 h-12 rounded-2xl object-cover border border-amber-500/40 shadow-glow-vino-sm"
-          />
-          <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+    <aside
+      className={clsx(
+        'flex h-dvh w-[276px] shrink-0 flex-col border-r border-arena-200/[0.07] bg-dark-900/95 backdrop-blur-xl',
+        mobile ? 'animate-drawer-in' : 'sticky top-0 hidden lg:flex',
+      )}
+      aria-label="Navegación principal"
+    >
+      {/* Brand */}
+      <div className="flex items-center gap-3 border-b border-arena-200/[0.07] px-5 py-[18px]">
+        <div className="relative shrink-0">
+          <div className="grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-gold-500/25 bg-dark-800 shadow-glow-vino-sm">
+            <img src="/images/logo_emblema.png" alt="El Establo" className="h-9 w-9 object-contain" />
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sage-400 opacity-60" />
+            <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-dark-900 bg-sage-500" />
           </span>
         </div>
-        <div className="min-w-0">
-          <h1 className="font-display font-bold text-sm text-arena-200 leading-tight tracking-wide truncate">
+
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate font-display text-[15px] font-semibold leading-tight tracking-wide text-arena-50">
             EL ESTABLO
           </h1>
-          <p className="text-[9px] text-vino-400 font-bold tracking-[2.5px] uppercase mt-0.5">
-            IMPULSE SYSTEM
+          <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.26em] text-gold-500/80">
+            Impulse System
           </p>
-          <span className="inline-block text-[8px] text-amber-300/80 font-medium">Parrillada Gourmet</span>
+          <p className="text-[10px] text-arena-300/45">Parrilladas y cortes</p>
         </div>
+
+        {mobile && (
+          <button
+            type="button"
+            onClick={onNavigate}
+            aria-label="Cerrar menú"
+            className="btn-icon h-9 w-9 shrink-0"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
-      {/* ── Nav ──────────────────────────────────────── */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="flex items-center justify-between px-2 mb-3">
-          <p className="text-[9px] font-bold text-dark-300 uppercase tracking-[3px]">
-            Embudo de Ventas
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto px-3 py-5">
+        <div className="mb-3 flex items-center justify-between px-2">
+          <p className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-arena-400/55">
+            Embudo comercial
           </p>
-          <span className="text-[9px] text-dark-300 font-mono">5 Fases</span>
+          <span className="text-[9px] font-medium uppercase tracking-widest text-arena-400/35">5 fases</span>
         </div>
 
-        {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.path)
+        <div className="space-y-1">
+          {navItems.map(item => {
+            const isActive = location.pathname.startsWith(item.path)
+            const Icon = item.icon
 
-          if (item.disabled) {
-            return (
-              <div key={item.phase}
-                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl opacity-35 cursor-not-allowed select-none border border-transparent">
-                <div className={clsx('w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-sm flex-shrink-0', item.gradient)}>
-                  {item.icon}
+            if (item.disabled) {
+              return (
+                <div
+                  key={item.phase}
+                  className="flex select-none items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 opacity-40"
+                  aria-disabled="true"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-arena-200/10 bg-dark-800 text-arena-300">
+                    <Icon size={16} strokeWidth={1.6} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-arena-300">{item.label}</p>
+                    <p className="truncate text-[10.5px] text-arena-300/50">{item.description}</p>
+                  </div>
+                  <span className="rounded-md border border-arena-200/10 bg-dark-800 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-arena-300/50">
+                    Pronto
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
+              )
+            }
+
+            return (
+              <NavLink
+                key={item.phase}
+                to={item.path}
+                onClick={onNavigate}
+                aria-current={isActive ? 'page' : undefined}
+                className={clsx(
+                  'group relative flex items-center gap-3 overflow-hidden rounded-xl border px-3 py-2.5 transition-all duration-200',
+                  isActive
+                    ? 'border-vino-800/50 bg-gradient-to-r from-vino-900/35 via-vino-900/10 to-transparent text-arena-50 shadow-glow-vino-sm'
+                    : 'border-transparent text-arena-300/65 hover:border-arena-200/[0.06] hover:bg-arena-200/[0.04] hover:text-arena-100',
+                )}
+              >
+                {isActive && (
+                  <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-gold-500 shadow-[0_0_12px_rgba(201,162,90,0.65)]" />
+                )}
+
+                <span className={clsx(
+                  'grid h-9 w-9 shrink-0 place-items-center rounded-xl border transition-all duration-200',
+                  isActive
+                    ? 'border-gold-500/25 bg-gold-500/10 text-gold-300'
+                    : 'border-arena-200/[0.07] bg-dark-800/70 text-arena-300/70 group-hover:border-arena-200/15 group-hover:text-arena-200',
+                )}>
+                  <Icon size={16} strokeWidth={1.7} />
+                </span>
+
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-dark-500 text-dark-300">
+                    <span className={clsx(
+                      'rounded px-1 py-0.5 text-[8.5px] font-bold uppercase tracking-wider',
+                      isActive ? 'bg-vino-900/60 text-arena-200' : 'bg-arena-200/[0.05] text-arena-400/60',
+                    )}>
                       {item.phase}
                     </span>
-                    <p className="text-[11px] font-bold text-dark-300 truncate">{item.label}</p>
+                    <p className="truncate text-[11px] font-semibold uppercase tracking-[0.12em]">{item.label}</p>
                   </div>
-                  <p className="text-[10px] text-dark-300/70 truncate">{item.description}</p>
+                  <p className="mt-0.5 truncate text-[10.5px] text-arena-300/45">{item.description}</p>
                 </div>
-                <span className="text-[8px] font-bold bg-dark-500 text-dark-300 px-1.5 py-0.5 rounded border border-dark-400">
-                  PRONTO
-                </span>
-              </div>
-            )
-          }
 
-          return (
-            <NavLink key={item.phase} to={item.path}
-              className={clsx(
-                'flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group border',
-                isActive
-                  ? 'bg-vino-900/35 border-vino-700/60 text-arena-200 shadow-glow-vino-sm'
-                  : 'border-transparent text-arena-300/60 hover:bg-dark-600/60 hover:border-dark-400/50 hover:text-arena-200'
-              )}
-            >
-              <div className={clsx(
-                'w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-sm flex-shrink-0 transition-transform duration-200',
-                item.gradient,
-                isActive ? 'scale-110 shadow-glow-sm' : 'group-hover:scale-105'
-              )}>
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className={clsx(
-                    'text-[9px] font-mono px-1 py-0.2 rounded',
-                    isActive ? 'bg-vino-800 text-arena-200 font-bold' : 'bg-dark-500 text-dark-300'
-                  )}>
-                    {item.phase}
-                  </span>
-                  <p className={clsx('text-[11px] font-bold tracking-wider truncate', isActive ? 'text-arena-200' : 'text-arena-300/80 group-hover:text-arena-200')}>
-                    {item.label}
-                  </p>
-                </div>
-                <p className="text-[10px] text-dark-300 group-hover:text-dark-300/90 truncate">{item.description}</p>
-              </div>
-              {isActive && <div className="w-1.5 h-1.5 rounded-full bg-vino-400 shadow-[0_0_8px_#ec7591]" />}
-            </NavLink>
-          )
-        })}
+                {isActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-400 shadow-[0_0_8px_rgba(201,162,90,0.8)]" />}
+              </NavLink>
+            )
+          })}
+        </div>
       </nav>
 
-      {/* ── Footer ───────────────────────────────────── */}
-      <div className="p-3" style={{ borderTop: '1px solid #2e1a1a' }}>
+      {/* Footer */}
+      <div className="border-t border-arena-200/[0.07] p-3">
         <a
           href="/formulario"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-dark-600 hover:bg-dark-500 border border-dark-400 text-arena-300 text-[11px] font-semibold mb-2 transition-colors"
+          onClick={onNavigate}
+          className="mb-2 flex items-center gap-2.5 rounded-xl border border-arena-200/[0.08] bg-dark-800/60 px-3 py-2.5 text-[11px] font-semibold text-arena-300/75 transition-colors hover:border-arena-200/15 hover:bg-dark-800 hover:text-arena-100"
         >
-          <span>🌐</span>
-          <span>Ver Landing Pública</span>
+          <Globe2 size={14} strokeWidth={1.7} className="text-gold-400" />
+          <span className="flex-1">Landing pública</span>
+          <ArrowUpRight size={13} className="text-arena-400/50" />
         </a>
 
-        <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-dark-700/80 border border-dark-400/80">
-          <div className="w-7 h-7 rounded-lg bg-vino-gradient flex items-center justify-center text-xs font-bold text-arena-200 shadow-glow-vino-sm">
-            🔥
-          </div>
+        <div className="flex items-center gap-2.5 rounded-xl border border-arena-200/[0.08] bg-dark-800/60 p-2.5">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-vino-700/40 bg-vino-900/30 text-vino-300">
+            <Flame size={15} strokeWidth={1.7} />
+          </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold text-arena-200 truncate">El Establo POS</p>
-            <p className="text-[9px] text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-              Mercado Pago Sandbox
+            <p className="truncate text-[11px] font-semibold text-arena-200">El Establo POS</p>
+            <p className="flex items-center gap-1.5 text-[9.5px] text-sage-400">
+              <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-sage-400" />
+              Mercado Pago · Sandbox
             </p>
           </div>
         </div>

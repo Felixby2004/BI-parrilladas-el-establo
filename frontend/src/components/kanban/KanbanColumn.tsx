@@ -1,46 +1,54 @@
 import { clsx } from 'clsx'
+import { Inbox } from 'lucide-react'
 import type { LeadKanban } from '@/types'
+import type { Tone } from '@/components/ui/kit'
 import { LeadCard } from './LeadCard'
 
 interface KanbanColumnProps {
   estado: string
   label: string
-  emoji: string
   description: string
-  colorClass: string
+  tone: Tone
   leads: LeadKanban[]
   onLeadMoved: () => void
   onLeadSelect: (lead: LeadKanban) => void
 }
 
+const DOTS: Record<Tone, string> = {
+  wine: 'bg-vino-500',
+  gold: 'bg-gold-500',
+  sage: 'bg-sage-500',
+  amber: 'bg-amber-500',
+  rose: 'bg-[#C46666]',
+  info: 'bg-[#6F9FC4]',
+  neutral: 'bg-arena-400',
+}
+
 export function KanbanColumn({
-  estado, label, emoji, description, colorClass, leads, onLeadMoved, onLeadSelect,
+  label, description, tone, leads, onLeadMoved, onLeadSelect,
 }: KanbanColumnProps) {
   return (
-    <div className="kanban-col">
-      {/* Header columna */}
+    <div className="kanban-col" aria-label={`Columna ${label}`}>
       <div className="kanban-col-header">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-base">{emoji}</span>
-            <span className={clsx('text-[11px] font-bold uppercase tracking-wider', colorClass)}>
+            <span className={clsx('h-2 w-2 shrink-0 rounded-full', DOTS[tone])} />
+            <h3 className="truncate text-[11px] font-bold uppercase tracking-[0.16em] text-arena-100">
               {label}
-            </span>
+            </h3>
           </div>
-          <p className="text-[10px] text-dark-300 mt-0.5 pl-6">{description}</p>
+          <p className="mt-1 pl-4 text-[10.5px] leading-tight text-arena-300/45">{description}</p>
         </div>
-        <span className="flex-shrink-0 min-w-[24px] h-6 px-2 rounded-full text-[10px] font-bold
-                         bg-dark-500 border border-dark-300 text-arena-300/70 flex items-center justify-center">
+        <span className="grid h-6 min-w-6 shrink-0 place-items-center rounded-full border border-arena-200/10 bg-arena-200/[0.05] px-2 text-[10.5px] font-bold tabular text-arena-300/75">
           {leads.length}
         </span>
       </div>
 
-      {/* Cards */}
-      <div className="flex flex-col gap-2.5 overflow-y-auto flex-1">
+      <div className="flex flex-1 flex-col gap-3 overflow-y-auto pb-1">
         {leads.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 opacity-30">
-            <div className="text-3xl mb-2">📭</div>
-            <p className="text-[10px] text-dark-300 text-center">Sin leads en esta etapa</p>
+          <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-arena-200/[0.06] px-4 py-8 text-center">
+            <Inbox size={22} strokeWidth={1.4} className="text-arena-400/30" />
+            <p className="mt-2 text-[10.5px] text-arena-300/35">Sin leads en esta etapa</p>
           </div>
         ) : (
           leads.map(lead => (

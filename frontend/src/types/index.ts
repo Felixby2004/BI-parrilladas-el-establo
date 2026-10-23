@@ -100,9 +100,9 @@ export const KANBAN_COLUMNS: { id: EstadoLead; label: string; color: string; acc
 ]
 
 export const INTERES_LABELS: Record<string, string> = {
-  reserva: '🍖 Reserva de Mesa',
-  informacion: 'ℹ️ Información General',
-  consulta: 'ℹ️ Consulta General',
-  evento: '🎉 Evento Privado',
-  otro: '💬 Otro',
+  reserva: 'Reserva de mesa',
+  informacion: 'Información general',
+  consulta: 'Consulta general',
+  evento: 'Evento privado',
+  otro: 'Otro',
 }

@@ -1,14 +1,31 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { clsx } from 'clsx'
+import {
+  ArrowLeft,
+  ClipboardList,
+  CreditCard,
+  MessageCircle,
+  UserRound,
+  AlertTriangle,
+} from 'lucide-react'
 import type { Perfil360, DetallePedido, MPPreferenceResponse } from '@/types/leads'
 import { perfilesService } from '@/services/leadsService'
 import { leadsService } from '@/services/api'
 import { ChatNegociacion } from '@/components/leads/ChatNegociacion'
 import { ResumenPedido } from '@/components/leads/ResumenPedido'
 import { PerfilLead } from '@/components/leads/PerfilLead'
+import { SegmentedTabs, Skeleton, StatusBadge, type Tone } from '@/components/ui/kit'
 
 type Tab = 'perfil' | 'chat' | 'pedido'
+
+const ESTADO_TONE: Record<string, Tone> = {
+  nuevo: 'info',
+  contactado: 'gold',
+  respondio: 'wine',
+  ganado: 'sage',
+  perdido: 'rose',
+}
 
 export default function NegociacionPage() {
   const { idLead } = useParams<{ idLead: string }>()
@@ -21,9 +38,19 @@ export default function NegociacionPage() {
   const [activeTab, setActiveTab] = useState<Tab>('chat')
   const [mpResp, setMpResp] = useState<MPPreferenceResponse | null>(null)
   const [itemsPedido, setItemsPedido] = useState<DetallePedido[]>([])
+  const [aviso, setAviso] = useState('')
 
   const [idBuyer, setIdBuyer] = useState<number>(0)
   const pedidoCargado = useRef<number>()
+  const avisoTimer = useRef<number>()
+
+  const mostrarAviso = useCallback((mensaje: string) => {
+    setAviso(mensaje)
+    window.clearTimeout(avisoTimer.current)
+    avisoTimer.current = window.setTimeout(() => setAviso(''), 4200)
+  }, [])
+
+  useEffect(() => () => window.clearTimeout(avisoTimer.current), [])
 
   const fetchPerfil = useCallback(async () => {
     if (!Number.isInteger(leadId) || leadId <= 0) {
@@ -39,7 +66,6 @@ export default function NegociacionPage() {
       ])
       setPerfil(data)
       setIdBuyer(lead.id_buyer)
-      // Los refrescos del chat no deben borrar el borrador del pedido.
       if (data.pedido_activo && pedidoCargado.current !== data.pedido_activo.id_pedido) {
         setItemsPedido(data.pedido_activo.detalles)
         pedidoCargado.current = data.pedido_activo.id_pedido
@@ -63,7 +89,7 @@ export default function NegociacionPage() {
 
   const handleAgregarAlPedido = (item: DetallePedido) => {
     if (perfil?.pago_adelanto || (perfil?.pedido_activo && perfil.pedido_activo.estado !== 'borrador')) {
-      window.alert('El pedido ya está confirmado y no admite cambios desde el catálogo.')
+      mostrarAviso('El pedido ya está confirmado y no admite cambios desde el catálogo.')
       return
     }
     setItemsPedido(prev => {
@@ -75,7 +101,6 @@ export default function NegociacionPage() {
       }
       return [...prev, item]
     })
-    // Cambiar al tab de pedido para mostrar feedback
     setActiveTab('pedido')
     setTimeout(() => setActiveTab('chat'), 600)
   }
@@ -87,10 +112,18 @@ export default function NegociacionPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center animate-fade-in">
-          <div className="text-5xl mb-4 animate-bounce">🔥</div>
-          <p className="text-gray-400">Cargando perfil del lead...</p>
+      <div className="animate-fade-in space-y-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-52" />
+            <Skeleton className="h-3 w-32" />
+          </div>
+        </div>
+        <div className="grid grid-cols-12 gap-4">
+          <Skeleton className="col-span-3 hidden h-[60dvh] xl:block" />
+          <Skeleton className="col-span-12 h-[60dvh] xl:col-span-6" />
+          <Skeleton className="col-span-3 hidden h-[60dvh] xl:block" />
         </div>
       </div>
     )
@@ -98,90 +131,89 @@ export default function NegociacionPage() {
 
   if (error || !perfil) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="text-5xl">😶</div>
-        <p className="text-red-400 text-sm">{error || 'Lead no encontrado'}</p>
-        <button onClick={() => navigate('/leads')} className="btn-ghost">
-          ← Volver al Kanban
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+        <span className="grid h-14 w-14 place-items-center rounded-2xl border border-vino-700/30 bg-vino-900/20 text-vino-300">
+          <AlertTriangle size={24} strokeWidth={1.5} />
+        </span>
+        <div>
+          <h1 className="font-display text-xl font-semibold text-arena-50">No pudimos abrir este lead</h1>
+          <p className="mt-1 text-sm text-arena-300/60">{error || 'Lead no encontrado'}</p>
+        </div>
+        <button onClick={() => navigate('/leads')} className="btn-secondary text-xs">
+          <ArrowLeft size={14} />
+          Volver al tablero
         </button>
       </div>
     )
   }
 
-  const tabs: { id: Tab; label: string; emoji: string }[] = [
-    { id: 'perfil', label: 'Perfil 360°', emoji: '👤' },
-    { id: 'chat',   label: 'Chat',        emoji: '💬' },
-    { id: 'pedido', label: 'Pedido',      emoji: '📋' },
+  const tabs: { id: Tab; label: string; icon: typeof UserRound }[] = [
+    { id: 'perfil', label: 'Perfil', icon: UserRound },
+    { id: 'chat',   label: 'Chat',   icon: MessageCircle },
+    { id: 'pedido', label: 'Pedido', icon: ClipboardList },
   ]
 
   return (
-    <div className="animate-fade-in h-[calc(100vh-4rem)] flex flex-col">
-
-      {/* ── Page Header ─────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <div className="flex items-center gap-3">
+    <div className="flex h-[calc(100dvh-8.5rem)] min-h-[640px] animate-fade-in flex-col">
+      {/* ── Header ────────────────────────────────────── */}
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             onClick={() => navigate('/leads')}
-            className="btn-ghost text-sm px-3 py-2"
+            aria-label="Volver al tablero"
+            className="btn-icon h-9 w-9 shrink-0"
           >
-            ← Kanban
+            <ArrowLeft size={16} />
           </button>
-          <div>
-            <h1 className="page-title text-xl">
-              🎯 Negociación — {perfil.buyer_nombre || `Lead #${perfil.id_lead}`}
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="eyebrow">Leads / Negociación</p>
+              <StatusBadge tone={ESTADO_TONE[perfil.estado_lead] ?? 'neutral'} dot>
+                {perfil.estado_lead}
+              </StatusBadge>
+              {perfil.buyer_etapa === 'payer' && <StatusBadge tone="sage">Payer</StatusBadge>}
+            </div>
+            <h1 className="mt-1 truncate font-display text-[clamp(1.35rem,2.2vw,1.8rem)] font-semibold tracking-tight text-arena-50">
+              {perfil.buyer_nombre || `Lead #${perfil.id_lead}`}
             </h1>
-            <p className="page-subtitle">
-              Lead #{perfil.id_lead} · Estado: <span className="text-brand-400 font-semibold">{perfil.estado_lead}</span>
-              {perfil.buyer_etapa === 'payer' && (
-                <span className="ml-2 badge badge-ganado">✅ PAYER</span>
-              )}
+            <p className="mt-0.5 text-[11px] text-arena-300/50">
+              Lead #{perfil.id_lead}
+              {perfil.buyer_telefono ? ` · ${perfil.buyer_telefono}` : ''}
+              {perfil.buyer_canal ? ` · ${perfil.buyer_canal}` : ''}
             </p>
           </div>
         </div>
 
-        {/* Badge de alerta si hay pago pendiente */}
         {mpResp && (
           <a
             href={mpResp.init_point}
             target="_blank"
             rel="noreferrer"
-            className="btn-primary text-sm animate-pulse-glow"
+            className="btn-primary animate-pulse-glow self-start px-4 py-2.5 text-xs lg:self-auto"
           >
-            💳 Ir a pagar ${mpResp.monto_adelanto} MXN →
+            <CreditCard size={15} />
+            Pagar ${mpResp.monto_adelanto} MXN
           </a>
         )}
       </div>
 
-      {/* ── Layout 3 columnas en desktop ────────────────────── */}
-      <div className="flex-1 grid grid-cols-12 gap-4 min-h-0">
-
-        {/* PERFIL (siempre visible en desktop) */}
-        <div className="hidden xl:block col-span-3 overflow-y-auto">
+      {/* ── Layout ────────────────────────────────────── */}
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 xl:grid-cols-[300px_minmax(0,1fr)_340px]">
+        <div className="hidden min-h-0 overflow-y-auto pr-1 xl:block">
           <PerfilLead perfil={perfil} />
         </div>
 
-        {/* CHAT (columna central) */}
-        <div className="col-span-12 xl:col-span-6 flex flex-col min-h-0">
-          {/* Tabs para mobile */}
-          <div className="flex xl:hidden gap-1 mb-3 bg-dark-700 p-1 rounded-xl border border-dark-500">
-            {tabs.map(t => (
-              <button
-                key={t.id}
-                onClick={() => setActiveTab(t.id)}
-                className={clsx(
-                  'flex-1 py-2 rounded-lg text-xs font-semibold transition-all',
-                  activeTab === t.id
-                    ? 'bg-brand-500 text-white shadow-glow-sm'
-                    : 'text-gray-400 hover:text-white'
-                )}
-              >
-                {t.emoji} {t.label}
-              </button>
-            ))}
+        <div className="flex min-h-0 flex-col">
+          <div className="mb-3 xl:hidden">
+            <SegmentedTabs
+              value={activeTab}
+              onChange={setActiveTab}
+              items={tabs}
+              className="w-full justify-between [&>button]:flex-1"
+            />
           </div>
 
-          {/* Vista condicional en mobile */}
-          <div className="flex-1 card p-0 overflow-hidden min-h-0">
+          <div className="min-h-0 flex-1 overflow-hidden rounded-[20px] border border-arena-200/[0.07] bg-dark-800/75 shadow-card">
             <div className={clsx('h-full', activeTab !== 'chat' && 'hidden xl:block')}>
               <ChatNegociacion
                 idLead={leadId}
@@ -192,7 +224,7 @@ export default function NegociacionPage() {
               />
             </div>
             <div className={clsx('h-full xl:hidden', activeTab !== 'perfil' && 'hidden')}>
-              <div className="p-4 overflow-y-auto h-full">
+              <div className="h-full overflow-y-auto p-4">
                 <PerfilLead perfil={perfil} />
               </div>
             </div>
@@ -213,9 +245,8 @@ export default function NegociacionPage() {
           </div>
         </div>
 
-        {/* RESUMEN PEDIDO (siempre visible en desktop) */}
-        <div className="hidden xl:flex col-span-3 flex-col min-h-0">
-          <div className="card p-0 overflow-hidden flex-1">
+        <div className="hidden min-h-0 flex-col xl:flex">
+          <div className="min-h-0 flex-1 overflow-hidden rounded-[20px] border border-arena-200/[0.07] bg-dark-800/75 shadow-card">
             <ResumenPedido
               idLead={leadId}
               idBuyer={idBuyer}
@@ -231,6 +262,16 @@ export default function NegociacionPage() {
           </div>
         </div>
       </div>
+
+      {aviso && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center gap-2.5 rounded-xl border border-gold-500/30 bg-dark-800/95 px-4 py-3 text-[12px] text-arena-200 shadow-2xl backdrop-blur-md animate-slide-up"
+        >
+          <AlertTriangle size={15} className="shrink-0 text-gold-400" />
+          <span>{aviso}</span>
+        </div>
+      )}
     </div>
   )
 }
