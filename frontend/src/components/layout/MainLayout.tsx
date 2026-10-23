@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { ArrowUpRight, CreditCard, Megaphone, Menu, Star, Target, UtensilsCrossed } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Sidebar } from './Sidebar'
+import { ThemeToggle } from '@/components/ui/kit'
 import { clsx } from 'clsx'
 
 const PHASE_TITLES: Record<string, { label: string; title: string; subtitle: string; icon: LucideIcon }> = {
@@ -126,6 +127,8 @@ export function MainLayout() {
                 MP Sandbox 10%
               </span>
             </div>
+
+            <ThemeToggle className="shrink-0" />
 
             <a
               href="/formulario"

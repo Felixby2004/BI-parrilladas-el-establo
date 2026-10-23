@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
+import { useState } from 'react'
 import { clsx } from 'clsx'
+import { Moon, Sun } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { applyTheme, currentTheme } from '@/theme'
 
 export type Tone = 'wine' | 'gold' | 'sage' | 'amber' | 'rose' | 'info' | 'neutral'
 
@@ -209,6 +212,28 @@ export function EmptyState({
 
 export function Skeleton({ className }: { className?: string }) {
   return <div className={clsx('animate-pulse rounded-xl bg-arena-200/[0.06]', className)} />
+}
+
+export function ThemeToggle({ className }: { className?: string }) {
+  const [theme, setTheme] = useState(currentTheme)
+  const isLight = theme === 'light'
+  const Icon = isLight ? Moon : Sun
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        const next = isLight ? 'dark' : 'light'
+        applyTheme(next)
+        setTheme(next)
+      }}
+      aria-label={isLight ? 'Activar modo oscuro' : 'Activar modo claro'}
+      title={isLight ? 'Modo oscuro' : 'Modo claro'}
+      className={clsx('btn-icon h-10 w-10', className)}
+    >
+      <Icon size={17} strokeWidth={1.8} />
+    </button>
+  )
 }
 
 export function IconTile({

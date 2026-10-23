@@ -55,6 +55,7 @@ No recrear `frontend` con `npm create vite` ni ejecutar `tailwindcss init`: ya e
 - `/buyers`: estudio creativo por prompt para fotografías publicitarias verticales 9:16 o 4:5. No muestra contactos ni métricas inventadas. [Configuración de Gemini/Pomelli](docs/CREATIVOS_GOOGLE.md).
 - `/leads`: tablero y tabla de contactos con búsqueda, filtros, orden, creación y cambio persistente de estado. Chat con consulta de mensajes cada 5 segundos, sin respuestas automáticas simuladas.
 - `POST /api/v1/integraciones/hermes/mensajes`: recepción protegida por Bearer con idempotencia persistente. [Contrato para el compañero de Hermes](docs/HERMES.md).
+- Interfaz: tema claro/oscuro conmutable desde la cabecera. La preferencia se guarda en `localStorage` (`establo-theme`) y, si no existe, se toma la del sistema operativo.
 
 El token Hermes local se encuentra en [backend/.env](backend/.env); no se publica ni envía al navegador. La clave Google no está configurada: añadir `GEMINI_API_KEY` al mismo archivo habilita la generación dentro de la app. Pomelli se abre externamente con cuenta Google; copiar un brief no equivale a haber generado una foto en Pomelli.
 

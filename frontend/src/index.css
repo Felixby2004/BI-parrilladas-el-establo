@@ -5,14 +5,15 @@
 /* ─── Reset & base ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; color-scheme: dark; }
+html.light { color-scheme: light; }
 body {
   @apply bg-dark-950 text-arena-100 font-sans antialiased;
   min-height: 100dvh;
-  background-color: #0c0a09;
+  background-color: var(--page-bg);
   background-image:
-    radial-gradient(ellipse 70% 48% at 12% -8%, rgba(127, 1, 31, 0.22), transparent 62%),
-    radial-gradient(ellipse 52% 44% at 102% 4%, rgba(201, 162, 90, 0.07), transparent 58%),
-    url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F5EBD0' fill-opacity='0.022'%3E%3Crect x='0' y='0' width='1' height='48'/%3E%3Crect x='0' y='0' width='48' height='1'/%3E%3C/g%3E%3C/svg%3E");
+    radial-gradient(ellipse 70% 48% at 12% -8%, var(--page-glow-vino), transparent 62%),
+    radial-gradient(ellipse 52% 44% at 102% 4%, var(--page-glow-gold), transparent 58%),
+    var(--page-grid);
   background-attachment: fixed;
 }
 body::before {
@@ -32,6 +33,7 @@ p { text-wrap: pretty; }
 :focus-visible { outline: 2px solid rgba(201, 162, 90, 0.7); outline-offset: 2px; }
 
 /* ─── Design tokens ────────────────────────────────────── */
+/* Canal RGB triplets: Tailwind compone `rgb(var(--x) / <alpha>)`. */
 :root {
   --ink-950: #080605;
   --ink-900: #0C0A09;
@@ -44,13 +46,130 @@ p { text-wrap: pretty; }
   --text-primary: #F6EFE6;
   --text-secondary: #C3B5A6;
   --ring: rgba(201, 162, 90, 0.28);
+
+  /* Superficies (tema oscuro) */
+  --dark-950: 8 6 5;
+  --dark-900: 12 10 9;
+  --dark-800: 18 16 14;
+  --dark-700: 25 21 18;
+  --dark-600: 33 28 24;
+  --dark-500: 42 35 30;
+  --dark-400: 58 48 42;
+  --dark-300: 76 63 54;
+  --dark-200: 107 90 78;
+
+  /* Tinta (tema oscuro) */
+  --arena-50: 253 250 244;
+  --arena-100: 248 241 228;
+  --arena-200: 245 235 208;
+  --arena-300: 229 211 174;
+  --arena-400: 210 185 138;
+  --arena-500: 201 162 90;
+  --arena-600: 173 132 67;
+  --arena-700: 138 102 52;
+  --arena-800: 107 79 41;
+  --arena-900: 79 58 31;
+
+  --gold-300: 227 200 148;
+  --gold-400: 214 180 120;
+  --gold-500: 201 162 90;
+  --sage-300: 169 203 184;
+  --sage-400: 139 185 161;
+  --vino-200: 237 188 197;
+  --vino-300: 222 147 161;
+
+  /* Fondo de página y sombras */
+  --page-bg: #0c0a09;
+  --page-glow-vino: rgba(127, 1, 31, 0.22);
+  --page-glow-gold: rgba(201, 162, 90, 0.07);
+  --page-grid: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F5EBD0' fill-opacity='0.022'%3E%3Crect x='0' y='0' width='1' height='48'/%3E%3Crect x='0' y='0' width='48' height='1'/%3E%3C/g%3E%3C/svg%3E");
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 24px 48px -32px rgba(0, 0, 0, 0.95);
+  --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 32px 64px -32px rgba(0, 0, 0, 0.95);
+  --scroll-thumb: #3a302a;
+  --scroll-thumb-hover: #6e1224;
+}
+
+/* Tema claro: mismas variables invertidas. `dark` sigue siendo superficie,
+   `arena` sigue siendo tinta, así las clases existentes se adaptan solas. */
+html.light {
+  --dark-950: 246 241 230;
+  --dark-900: 252 248 240;
+  --dark-800: 255 255 255;
+  --dark-700: 247 242 232;
+  --dark-600: 238 229 214;
+  --dark-500: 229 217 198;
+  --dark-400: 214 199 175;
+  --dark-300: 196 178 151;
+  --dark-200: 168 148 120;
+
+  --arena-50: 27 19 16;
+  --arena-100: 36 27 23;
+  --arena-200: 63 50 42;
+  --arena-300: 74 59 48;
+  --arena-400: 107 86 71;
+  --arena-500: 139 112 88;
+  --arena-600: 160 131 99;
+  --arena-700: 138 102 52;
+  --arena-800: 107 79 41;
+  --arena-900: 79 58 31;
+
+  --gold-300: 138 102 52;
+  --gold-400: 168 127 63;
+  --gold-500: 156 116 52;
+  --sage-300: 63 108 85;
+  --sage-400: 84 138 109;
+  --vino-200: 127 1 31;
+  --vino-300: 160 35 66;
+
+  --page-bg: #f6f1e6;
+  --page-glow-vino: rgba(127, 1, 31, 0.07);
+  --page-glow-gold: rgba(201, 162, 90, 0.14);
+  --page-grid: none;
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 18px 36px -28px rgba(74, 49, 26, 0.4);
+  --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 26px 52px -28px rgba(74, 49, 26, 0.45);
+  --scroll-thumb: #c9bba3;
+  --scroll-thumb-hover: #9a1733;
+}
+
+/* Superficie siempre oscura (páginas con foto de fondo), inmune al tema. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --dark-950: 8 6 5;
+  --dark-900: 12 10 9;
+  --dark-800: 18 16 14;
+  --dark-700: 25 21 18;
+  --dark-600: 33 28 24;
+  --dark-500: 42 35 30;
+  --dark-400: 58 48 42;
+  --dark-300: 76 63 54;
+  --dark-200: 107 90 78;
+
+  --arena-50: 253 250 244;
+  --arena-100: 248 241 228;
+  --arena-200: 245 235 208;
+  --arena-300: 229 211 174;
+  --arena-400: 210 185 138;
+  --arena-500: 201 162 90;
+  --arena-600: 173 132 67;
+  --arena-700: 138 102 52;
+  --arena-800: 107 79 41;
+  --arena-900: 79 58 31;
+
+  --gold-300: 227 200 148;
+  --gold-400: 214 180 120;
+  --gold-500: 201 162 90;
+  --sage-300: 169 203 184;
+  --sage-400: 139 185 161;
+  --vino-200: 237 188 197;
+  --vino-300: 222 147 161;
 }
 
 /* ─── Scrollbar ────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3a302a; border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: #6e1224; background-clip: padding-box; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); background-clip: padding-box; }
 
 /* ─── Componentes globales ─────────────────────────────── */
 @layer components {
@@ -226,6 +345,32 @@ p { text-wrap: pretty; }
   /* ── Utilidades ──────────────────────────────────── */
   .tabular { font-variant-numeric: tabular-nums; }
 }
+
+/* ─── Ajustes de tema claro ────────────────────────────── */
+/* Texto sobre superficies de marca sólidas debe seguir claro en ambos temas. */
+html.light .btn-primary,
+html.light .bg-vino-900,
+html.light .bg-vino-800,
+html.light .bg-gradient-to-br.text-arena-50 { color: #f6efe6; }
+
+html.light .hover\:bg-vino-800:hover { color: #f6efe6; }
+
+html.light .btn-arena,
+html.light .text-dark-950 { color: #241b17; }
+
+html.light .input-field::-webkit-calendar-picker-indicator { filter: none; opacity: 0.6; }
+
+/* Acentos pálidos del tema oscuro: versión oscurecida para fondo claro. */
+html.light .text-\[\#E0A3A3\] { color: #a03a3a; }
+html.light .text-\[\#E8B4B4\] { color: #8f2f2f; }
+html.light .text-\[\#A8C6E0\] { color: #33698f; }
+html.light .text-\[\#BBD4E9\] { color: #2c5b7d; }
+html.light .text-\[\#D2B6E2\] { color: #6b4a85; }
+html.light .text-\[\#DCC5EA\] { color: #5a3d72; }
+
+html.light .badge-nuevo    { color: #33698f; }
+html.light .badge-respondio{ color: #6b4a85; }
+html.light .badge-perdido  { color: #a03a3a; }
 
 /* ─── Print: sólo comprobante ──────────────────────────── */
 @media print {

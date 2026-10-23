@@ -5,6 +5,18 @@
     <link rel="icon" type="image/png" href="/images/logo_emblema.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0C0A09" />
+    <script>
+      // Aplica el tema guardado (o el del SO) antes del primer paint.
+      (function () {
+        try {
+          var saved = localStorage.getItem('establo-theme');
+          var light = saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+          if (light) document.documentElement.classList.add('light');
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', light ? '#f6f1e6' : '#0C0A09');
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="Sistema IMPULSE de Parrilladas El Establo — gestión comercial de Buyers, Leads, Payers y Customers." />
     <meta property="og:title" content="Parrilladas El Establo — Sistema Comercial IMPULSE" />
     <meta property="og:description" content="Captación, negociación, caja y servicio en un solo lugar. Cortes al carbón, hospitalidad de casa." />

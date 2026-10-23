@@ -152,7 +152,7 @@ export default function FormularioCaptacion() {
   }
 
   return (
-    <div className="min-h-dvh bg-dark-950 lg:grid lg:grid-cols-[1.06fr_0.94fr]">
+    <div data-theme="dark" className="min-h-dvh bg-dark-950 lg:grid lg:grid-cols-[1.06fr_0.94fr]">
       {/* ── Hero editorial ─────────────────────────────── */}
       <section className="relative flex min-h-[560px] flex-col justify-between overflow-hidden p-6 sm:p-10 lg:min-h-dvh lg:p-12 xl:p-16">
         <img
