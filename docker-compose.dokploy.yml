@@ -54,7 +54,11 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_oltp:5432/${POSTGRES_DB}
       SECRET_KEY: ${SECRET_KEY}
       MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN:-}
+      MP_PUBLIC_KEY: ${MP_PUBLIC_KEY:-}
       MP_WEBHOOK_URL: ${MP_WEBHOOK_URL:-}
+      HERMES_WEBHOOK_TOKEN: ${HERMES_WEBHOOK_TOKEN:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_IMAGE_MODEL: ${GEMINI_IMAGE_MODEL:-gemini-3.1-flash-image}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
     depends_on:
       db_oltp:
