@@ -20,6 +20,14 @@ class Settings(BaseSettings):
     def DATABASE_URL_SYNC(self) -> str:
         return make_url(self.DATABASE_URL).set(drivername="postgresql+psycopg2").render_as_string(hide_password=False)
 
+    # CORS: lista separada por comas. En producción con proxy /api del frontend
+    # no se necesita ninguno, porque la API queda en el mismo origen.
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
+
     # Mercado Pago
     MP_ACCESS_TOKEN: str = "TEST-0000000000000000-000000-00000000000000000000000000000000-000000000"
     MP_PUBLIC_KEY: Optional[str] = None

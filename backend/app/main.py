@@ -26,7 +26,9 @@ from app.api.v1.customers import router as customers_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print(f"🔥 {settings.PROJECT_NAME} v{settings.VERSION}")
-    await init_db()
+    # En producción el esquema lo aplica Alembic (ver CMD del Dockerfile).
+    if settings.ENVIRONMENT == "development":
+        await init_db()
     try:
         yield
     finally:
@@ -45,7 +47,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
