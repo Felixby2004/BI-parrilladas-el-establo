@@ -4,6 +4,7 @@ from app.models.buyers_models   import BuyerPersona, Campana, Anuncio, Formulari
 from app.models.leads_models    import PerfilGustos, PerfilReserva, NegociacionLead, Pedido, DetallePedido, Pago
 from app.models.payers_models   import Mesa, Payer, InstruccionPago, Comprobante
 from app.models.customers_models import Servicio, ServicioDetalle, AlertaConsumo, ResenaServicio
+from app.models.hermes_models import HermesMensaje
 
 __all__ = [
     # Base
@@ -16,4 +17,5 @@ __all__ = [
     "Mesa", "Payer", "InstruccionPago", "Comprobante",
     # Customers
     "Servicio", "ServicioDetalle", "AlertaConsumo", "ResenaServicio",
+    "HermesMensaje",
 ]

@@ -23,7 +23,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { phase: 'B', label: 'Buyers',    icon: Megaphone,       description: 'Captación y campañas',    path: '/buyers' },
+  { phase: 'B', label: 'Buyers',    icon: Megaphone,       description: 'Campañas y creativos',    path: '/buyers' },
   { phase: 'L', label: 'Leads',     icon: Target,          description: 'Negociación y pedidos',   path: '/leads' },
   { phase: 'P', label: 'Payers',    icon: CreditCard,      description: 'Caja y cobros',           path: '/payers' },
   { phase: 'C', label: 'Customers', icon: UtensilsCrossed, description: 'Servicio en salón',       path: '/customers' },

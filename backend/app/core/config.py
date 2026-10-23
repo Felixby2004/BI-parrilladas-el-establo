@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     # Proyecto
     PROJECT_NAME: str = "Parrilladas El Establo — IMPULSE API"
-    VERSION: str = "1.0.0"
+    VERSION: str = "1.1.0"
     ENVIRONMENT: str = "development"
     API_PREFIX: str = "/api/v1"
 
@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     MP_ACCESS_TOKEN: str = "TEST-0000000000000000-000000-00000000000000000000000000000000-000000000"
     MP_PUBLIC_KEY: Optional[str] = None
     MP_WEBHOOK_URL: str = "http://localhost:8000/api/v1/pagos/webhook"
+
+    # Integraciones: secretos solo en backend, nunca en VITE_*.
+    HERMES_WEBHOOK_TOKEN: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_IMAGE_MODEL: str = "gemini-3.1-flash-image"
 
     # Seguridad (para futuras fases)
     SECRET_KEY: str = "cambiar-en-produccion-usar-openssl-rand-hex-32"

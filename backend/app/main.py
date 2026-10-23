@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.db.database import init_db, engine
+from app.db.database import engine
 from sqlalchemy import text
 
 # ── Fase BUYERS ──────────────────────────────────────────────
@@ -21,12 +21,16 @@ from app.api.v1.payers    import router as payers_router
 
 # ── Fase CUSTOMERS ───────────────────────────────────────────
 from app.api.v1.customers import router as customers_router
+from app.api.v1.hermes import router as hermes_router
+from app.api.v1.creativos import router as creativos_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print(f"🔥 {settings.PROJECT_NAME} v{settings.VERSION}")
-    await init_db()
+    # El esquema se administra con Alembic, nunca se crea silenciosamente en startup.
+    async with engine.connect() as connection:
+        await connection.execute(text("SELECT 1"))
     try:
         yield
     finally:
@@ -68,6 +72,8 @@ app.include_router(payers_router,    prefix=PREFIX)
 
 # Fase CUSTOMERS
 app.include_router(customers_router, prefix=PREFIX)
+app.include_router(hermes_router, prefix=PREFIX)
+app.include_router(creativos_router, prefix=PREFIX)
 
 
 @app.get("/health", tags=["Health"])

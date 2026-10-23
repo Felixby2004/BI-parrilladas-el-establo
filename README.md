@@ -50,6 +50,14 @@ npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 
 No recrear `frontend` con `npm create vite` ni ejecutar `tailwindcss init`: ya está configurado con Tailwind 3. No generar las cuatro migraciones históricas de las instrucciones originales: una migración inicial consolida los modelos actuales. Para cambios futuros, usar `alembic revision --autogenerate -m descripcion` y revisar antes de `alembic upgrade head`.
 
+## Buyers, Leads y Hermes
+
+- `/buyers`: estudio creativo por prompt para fotografías publicitarias verticales 9:16 o 4:5. No muestra contactos ni métricas inventadas. [Configuración de Gemini/Pomelli](docs/CREATIVOS_GOOGLE.md).
+- `/leads`: tablero y tabla de contactos con búsqueda, filtros, orden, creación y cambio persistente de estado. Chat con consulta de mensajes cada 5 segundos, sin respuestas automáticas simuladas.
+- `POST /api/v1/integraciones/hermes/mensajes`: recepción protegida por Bearer con idempotencia persistente. [Contrato para el compañero de Hermes](docs/HERMES.md).
+
+El token Hermes local se encuentra en [backend/.env](backend/.env); no se publica ni envía al navegador. La clave Google no está configurada: añadir `GEMINI_API_KEY` al mismo archivo habilita la generación dentro de la app. Pomelli se abre externamente con cuenta Google; copiar un brief no equivale a haber generado una foto en Pomelli.
+
 ## Verificación
 
 ```powershell
@@ -58,8 +66,11 @@ cd backend
 .\.venv\Scripts\python.exe -m alembic check
 .\.venv\Scripts\python.exe scripts\check_http_flow.py
 .\.venv\Scripts\python.exe scripts\check_http_flow.py --postgres
+.\.venv\Scripts\python.exe scripts\check_hermes.py --postgres
+.\.venv\Scripts\python.exe scripts\check_creativos.py
 cd ..\frontend
 npm run build
+npm run test:buyers
 npm audit --omit=dev
 ```
 
@@ -73,7 +84,7 @@ La configuración está en `backend/.env`; debe coincidir con las credenciales l
 
 Mercado Pago requiere credenciales válidas de pruebas y una URL HTTPS pública para recibir webhooks; localhost no sirve como webhook externo. No se realizan cobros reales en la verificación local. Las claves existentes no fueron publicadas ni reemplazadas. Si se compartieron anteriormente, revocarlas y regenerarlas desde Mercado Pago.
 
-Esta configuración es de desarrollo: credenciales locales conocidas y API sin autenticación. No exponerla a Internet ni usarla directamente en producción. La fase TURNED se conserva como pantalla pendiente del proyecto original. El bot de negociación y el catálogo de esa pantalla son demostrativos.
+Esta configuración es de desarrollo: credenciales locales conocidas y API sin autenticación de usuarios; solo la recepción Hermes exige su token Bearer. No exponerla a Internet ni usarla directamente en producción. La fase TURNED se conserva como pantalla pendiente del proyecto original. El catálogo de negociación sigue siendo demostrativo. El chat no genera respuestas de bot ni entrega mensajes a WhatsApp: registra mensajes internos y los que recibe desde Hermes.
 
 Mercado Pago conserva limitaciones del proyecto original: falta validar la firma del webhook y completar conciliación de devoluciones. No habilitar pagos de producción sin resolverlas.
 

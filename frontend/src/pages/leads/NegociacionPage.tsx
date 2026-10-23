@@ -129,7 +129,7 @@ export default function NegociacionPage() {
     )
   }
 
-  if (error || !perfil) {
+  if (!perfil) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <span className="grid h-14 w-14 place-items-center rounded-2xl border border-vino-700/30 bg-vino-900/20 text-vino-300">
@@ -197,6 +197,7 @@ export default function NegociacionPage() {
         )}
       </div>
 
+      {error && <div role="alert" className="mb-3 rounded-xl border border-red-400/25 bg-red-400/10 px-4 py-2 text-xs text-red-200">{error}. Se conserva el perfil y pedido local. <button type="button" onClick={() => void fetchPerfil()} className="underline">Reintentar</button></div>}
       {/* ── Layout ────────────────────────────────────── */}
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 xl:grid-cols-[300px_minmax(0,1fr)_340px]">
         <div className="hidden min-h-0 overflow-y-auto pr-1 xl:block">

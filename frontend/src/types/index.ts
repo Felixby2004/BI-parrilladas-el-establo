@@ -32,6 +32,7 @@ export interface LeadKanban {
   buyer_nombre?: string
   buyer_telefono?: string
   buyer_email?: string
+  buyer_canal?: string
   campana_nombre?: string
 }
 

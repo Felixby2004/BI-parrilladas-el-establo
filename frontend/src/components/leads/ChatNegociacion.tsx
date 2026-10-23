@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiErrorMessage } from '@/services/errors'
 import { clsx } from 'clsx'
 import {
   Beef,
@@ -26,21 +28,6 @@ interface ChatNegociacionProps {
   onAgregarAlPedido: (item: DetallePedido) => void
 }
 
-const BOT_RESPONSES: Record<string, string> = {
-  hola: "¡Hola! 🔥 Soy el asistente de Parrilladas El Establo. Estoy aquí para ayudarte a armar tu pedido perfecto. ¿Qué tipo de corte te interesa?",
-  reserva: "¡Perfecto! Para confirmar tu reserva necesito:\n📅 ¿Qué fecha tienes en mente?\n👥 ¿Cuántas personas asistirán?\n🎉 ¿Es alguna ocasión especial?",
-  precio: "💰 Nuestros precios van desde $120 MXN (entradas) hasta $420 MXN (cortes premium). El paquete incluye guarnición y pan de ajo. ¿Te armo una propuesta?",
-  default: "Entendido. Te voy a preparar una selección personalizada. ¿Quieres que te sugiera nuestros cortes más populares? 🥩",
-}
-
-function getBotResponse(msg: string): string {
-  const lower = msg.toLowerCase()
-  if (lower.includes('hola') || lower.includes('buenas')) return BOT_RESPONSES.hola
-  if (lower.includes('reserva') || lower.includes('fecha')) return BOT_RESPONSES.reserva
-  if (lower.includes('precio') || lower.includes('costo') || lower.includes('cuánto')) return BOT_RESPONSES.precio
-  return BOT_RESPONSES.default
-}
-
 const CATEGORIA_ICON = {
   corte: Beef,
   entrada: Soup,
@@ -59,11 +46,11 @@ const CATEGORIA_TONE = {
 
 function ChatBubble({ msg }: { msg: MensajeChat }) {
   const isBot = msg.remitente === 'bot'
-  const isCliente = msg.remitente === 'cliente'
+  const isOutgoing = msg.remitente === 'agente'
 
   return (
-    <div className={clsx('flex gap-2', isCliente ? 'justify-end' : 'justify-start')}>
-      {!isCliente && (
+    <div className={clsx('flex gap-2', isOutgoing ? 'justify-end' : 'justify-start')}>
+      {!isOutgoing && (
         <span className={clsx(
           'mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full border',
           isBot
@@ -76,20 +63,18 @@ function ChatBubble({ msg }: { msg: MensajeChat }) {
 
       <div className={clsx(
         'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[12.5px] leading-relaxed shadow-sm sm:max-w-[75%]',
-        isCliente
+        isOutgoing
           ? 'rounded-tr-sm bg-vino-900 text-arena-50'
           : isBot
             ? 'rounded-tl-sm border border-arena-200/[0.07] bg-dark-700/90 text-arena-100'
             : 'rounded-tl-sm border border-gold-500/25 bg-gold-500/[0.07] text-arena-100',
       )}>
-        {!isCliente && (
-          <p className={clsx('mb-1 text-[9px] font-bold uppercase tracking-[0.12em]', isBot ? 'text-vino-300' : 'text-gold-300')}>
-            {isBot ? 'Bot Establo' : 'Agente'}
-          </p>
-        )}
-        <p style={{ whiteSpace: 'pre-line' }}>{msg.mensaje}</p>
-        <p className={clsx('mt-1 text-[9px]', isCliente ? 'text-right text-arena-200/55' : 'text-arena-400/45')}>
-          {new Date(msg.created_at).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+        <p className={clsx('mb-1 text-[9px] font-bold uppercase tracking-[0.12em]', isBot ? 'text-vino-300' : 'text-arena-200/75')}>
+          {isBot ? 'Automatización registrada' : isOutgoing ? 'Agente' : 'Cliente'}
+        </p>
+        <p className="break-words" style={{ whiteSpace: 'pre-line' }}>{msg.mensaje}</p>
+        <p className={clsx('mt-1 text-[9px]', isOutgoing ? 'text-right text-arena-200/55' : 'text-arena-400/45')}>
+          {new Date(msg.created_at).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
     </div>
@@ -139,32 +124,44 @@ export function ChatNegociacion({
   const [sending, setSending] = useState(false)
   const [showCatalogo, setShowCatalogo] = useState(false)
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>('all')
+  const [sendError, setSendError] = useState('')
+  const cache = useQueryClient()
+  const chat = useQuery({
+    queryKey: ['lead-chat', idLead],
+    queryFn: () => perfilesService.getChat(idLead),
+    refetchInterval: 5_000,
+    staleTime: 0,
+    retry: 1,
+  })
   const endRef = useRef<HTMLDivElement>(null)
-  const mensajesOrdenados = [...mensajes].sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const nearBottom = useRef(true)
+  const mensajesOrdenados = [...(chat.data ?? mensajes)].sort(
+    (a, b) => (new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) || a.id_negociacion - b.id_negociacion,
   )
+  const lastMessageId = mensajesOrdenados[mensajesOrdenados.length - 1]?.id_negociacion
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [mensajes])
+    if (nearBottom.current) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [lastMessageId])
 
   const handleSend = async () => {
     if (!inputMsg.trim() || sending) return
     setSending(true)
     const texto = inputMsg.trim()
-    setInputMsg('')
+    setSendError('')
 
     try {
-      await perfilesService.enviarMensaje(idLead, texto, 'cliente')
+      const saved = await perfilesService.enviarMensaje(idLead, texto, 'agente')
+      cache.setQueryData<MensajeChat[]>(['lead-chat', idLead], current => [
+        ...(current ?? mensajes).filter(message => message.id_negociacion !== saved.id_negociacion), saved,
+      ])
+      setInputMsg(current => current.trim() === texto ? '' : current)
+      nearBottom.current = true
+      void cache.invalidateQueries({ queryKey: ['lead-chat', idLead] })
       onMensajeEnviado()
-
-      setTimeout(async () => {
-        const respuesta = getBotResponse(texto)
-        await perfilesService.enviarMensaje(idLead, respuesta, 'bot')
-        onMensajeEnviado()
-      }, 1000)
     } catch (e) {
-      console.error(e)
+      setSendError(apiErrorMessage(e, 'No se pudo confirmar el mensaje. El borrador sigue aquí; revisa el historial antes de reenviar.'))
     } finally {
       setSending(false)
     }
@@ -200,14 +197,11 @@ export function ChatNegociacion({
           <div className="grid h-10 w-10 place-items-center rounded-full border border-sage-500/30 bg-sage-500/10 font-display text-sm font-bold text-sage-200">
             {(buyerNombre || 'C').charAt(0).toUpperCase()}
           </div>
-          <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-dark-800 bg-sage-400" />
+
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13px] font-semibold text-arena-50">{buyerNombre || 'Cliente'}</p>
-          <p className="flex items-center gap-1.5 text-[10px] text-sage-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-sage-400" />
-            En línea · WhatsApp
-          </p>
+          <p className="text-[10px] text-arena-300/60">Historial real · actualización cada 5 s</p>
         </div>
         <button
           type="button"
@@ -221,13 +215,14 @@ export function ChatNegociacion({
           )}
         >
           <ClipboardList size={13} />
-          Catálogo
+          Catálogo demo
         </button>
       </div>
 
+      {chat.isError && <div role="alert" className="border-b border-red-400/20 bg-red-400/10 px-4 py-2 text-[11px] text-red-200">No se pudo actualizar el historial. Se conserva la última versión. <button type="button" onClick={() => void chat.refetch()} className="underline">Reintentar</button></div>}
       <div className="relative flex flex-1 overflow-hidden">
         {/* Mensajes */}
-        <div className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_20%_10%,rgba(127,1,31,0.10),transparent_55%)] p-4">
+        <div ref={scrollRef} onScroll={() => { const node = scrollRef.current; if (node) nearBottom.current = node.scrollHeight - node.scrollTop - node.clientHeight < 100 }} className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_20%_10%,rgba(127,1,31,0.10),transparent_55%)] p-4">
           <div className="space-y-3">
             {mensajesOrdenados.length === 0 && (
               <div className="flex h-48 flex-col items-center justify-center text-center">
@@ -254,7 +249,7 @@ export function ChatNegociacion({
             />
             <aside aria-label="Catálogo de productos" className="absolute inset-y-0 right-0 z-20 flex w-full flex-col border-l border-arena-200/[0.07] bg-dark-900/98 sm:relative sm:z-0 sm:w-72 sm:max-w-none">
               <div className="flex items-center justify-between border-b border-arena-200/[0.07] p-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-arena-300/60">Catálogo</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-arena-300/60">Catálogo de demostración</p>
                 <button type="button" onClick={() => setShowCatalogo(false)} aria-label="Cerrar catálogo" className="btn-icon h-7 w-7">
                   <X size={13} />
                 </button>
@@ -295,8 +290,8 @@ export function ChatNegociacion({
             type="text"
             value={inputMsg}
             onChange={e => setInputMsg(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Escribe como agente o simula cliente…"
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) void handleSend() }}
+            placeholder="Registrar mensaje como agente…"
             aria-label="Mensaje"
             className="input-field flex-1 py-2.5 text-[12.5px]"
           />
@@ -304,14 +299,15 @@ export function ChatNegociacion({
             type="button"
             onClick={handleSend}
             disabled={!inputMsg.trim() || sending}
-            aria-label="Enviar mensaje"
+            aria-label="Guardar mensaje en el historial"
             className="btn-primary h-10 w-10 shrink-0 rounded-xl p-0"
           >
             {sending ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-arena-100 border-t-transparent" /> : <Send size={15} />}
           </button>
         </div>
-        <p className="mt-2 text-center text-[9.5px] text-arena-400/35">
-          Enter para enviar · Los mensajes se guardan en el historial del lead
+        {sendError && <p role="alert" className="mt-2 text-[11px] text-red-200">{sendError}</p>}
+        <p className="mt-2 text-center text-[10px] leading-relaxed text-arena-300/65">
+          Responder aquí registra el mensaje; aún no lo envía a WhatsApp/Hermes.
         </p>
       </div>
     </div>

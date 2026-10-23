@@ -28,6 +28,16 @@ export const leadsService = {
   listar: (estado?: string) =>
     api.get<LeadKanban[]>('/leads', { params: estado ? { estado } : {} }).then(r => r.data),
 
+  listarTodos: async () => {
+    const leads: LeadKanban[] = []
+    const limit = 100
+    for (let skip = 0; ; skip += limit) {
+      const { data } = await api.get<LeadKanban[]>('/leads', { params: { skip, limit } })
+      leads.push(...data)
+      if (data.length < limit) return [...new Map(leads.map(lead => [lead.id_lead, lead])).values()]
+    }
+  },
+
   stats: () =>
     api.get<KanbanStats>('/leads/stats').then(r => r.data),
 

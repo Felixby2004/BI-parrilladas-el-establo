@@ -11,7 +11,8 @@ from sqlalchemy.orm import selectinload
 from app.db.database import get_db
 from app.models.buyers_models import Lead, Campana
 from app.models.base_models import Buyer
-from app.models.leads_models import Pedido
+from app.models.leads_models import Pedido, NegociacionLead
+from app.models.hermes_models import HermesMensaje
 from app.schemas.buyers_schemas import (
     LeadRead,
     LeadKanbanRead,
@@ -40,6 +41,7 @@ def _to_kanban(lead: Lead) -> LeadKanbanRead:
         ),
         buyer_telefono=lead.buyer.telefono if lead.buyer else None,
         buyer_email=lead.buyer.email if lead.buyer else None,
+        buyer_canal=lead.buyer.canal_captacion if lead.buyer else None,
         campana_nombre=lead.campana.nombre if lead.campana else None,
     )
 
@@ -52,14 +54,14 @@ def _to_kanban(lead: Lead) -> LeadKanbanRead:
 )
 async def listar_leads(
     estado: Optional[str] = Query(None, description="Filtrar por estado del Kanban"),
-    skip: int = 0,
-    limit: int = 100,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
 ):
     q = select(Lead).options(
         selectinload(Lead.buyer),
         selectinload(Lead.campana),
-    ).order_by(Lead.created_at.desc()).offset(skip).limit(limit)
+    ).order_by(Lead.created_at.desc(), Lead.id_lead.desc()).offset(skip).limit(limit)
 
     if estado:
         q = q.where(Lead.estado == estado)
@@ -166,4 +168,11 @@ async def eliminar_lead(id_lead: int, db: AsyncSession = Depends(get_db)):
     pedidos_r = await db.execute(select(Pedido.id_pedido).where(Pedido.id_lead == id_lead).limit(1))
     if pedidos_r.scalar_one_or_none() is not None:
         raise HTTPException(409, "No se puede eliminar un lead con pedidos")
+    hermes_r = await db.execute(
+        select(HermesMensaje.message_id)
+        .join(NegociacionLead, NegociacionLead.id_negociacion == HermesMensaje.id_negociacion)
+        .where(NegociacionLead.id_lead == id_lead).limit(1)
+    )
+    if hermes_r.scalar_one_or_none() is not None:
+        raise HTTPException(409, "No se puede eliminar un lead con recibos Hermes")
     await db.delete(lead)

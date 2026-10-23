@@ -1,7 +1,7 @@
 """
 ROUTER: Perfiles del Lead (Gustos y Reserva)
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -88,7 +88,7 @@ async def perfil_360(id_lead: int, db: AsyncSession = Depends(get_db)):
     msg_r = await db.execute(
         select(NegociacionLead)
         .where(NegociacionLead.id_lead == id_lead)
-        .order_by(NegociacionLead.created_at.desc())
+        .order_by(NegociacionLead.created_at.desc(), NegociacionLead.id_negociacion.desc())
         .limit(20)
     )
     mensajes = list(reversed(msg_r.scalars().all()))
@@ -230,13 +230,13 @@ async def enviar_mensaje(
 )
 async def historial_chat(
     id_lead: int,
-    limit: int = 50,
+    limit: int = Query(100, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
 ):
     r = await db.execute(
         select(NegociacionLead)
         .where(NegociacionLead.id_lead == id_lead)
-        .order_by(NegociacionLead.created_at.asc())
+        .order_by(NegociacionLead.created_at.desc(), NegociacionLead.id_negociacion.desc())
         .limit(limit)
     )
-    return r.scalars().all()
+    return list(reversed(r.scalars().all()))

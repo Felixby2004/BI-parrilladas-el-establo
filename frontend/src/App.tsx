@@ -8,6 +8,7 @@ import FormularioCaptacion from '@/pages/buyers/FormularioCaptacion'
 
 // Leads
 import NegociacionPage from '@/pages/leads/NegociacionPage'
+import LeadsPage from '@/pages/leads/LeadsPage'
 
 // Payers
 import PayersPage from '@/pages/payers/PayersPage'
@@ -40,7 +41,7 @@ export default function App() {
             <Route path="/buyers" element={<DashboardMarketing />} />
 
             {/* ── LEADS ───────────────────────────────── */}
-            <Route path="/leads" element={<DashboardMarketing />} />
+            <Route path="/leads" element={<LeadsPage />} />
             <Route path="/leads/:idLead/negociacion" element={<NegociacionPage />} />
 
             {/* ── PAYERS ──────────────────────────────── */}

@@ -255,6 +255,7 @@ class LeadKanbanRead(BaseModel):
     buyer_nombre: Optional[str] = None
     buyer_telefono: Optional[str] = None
     buyer_email: Optional[str] = None
+    buyer_canal: Optional[str] = None
     campana_nombre: Optional[str] = None
 
 
