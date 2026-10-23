@@ -1,0 +1,41 @@
+name: establo-bi
+
+# SQL Server solo para el esquema de BI (db/oltp_elestablo_v1.sql).
+# Despliegue aparte en Dokploy: Create Service -> Compose, Compose Path = docker-compose.mssql.yml.
+# Requiere MSSQL_SA_PASSWORD en el entorno de Dokploy. No versionar ese valor.
+#
+# ponytail: límite de 2 GB porque el VPS tiene ~3.5 GB disponibles. Si se amplía la RAM,
+# subir MSSQL_MEMORY_LIMIT_MB y el límite del contenedor en el mismo paso.
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_MEMORY_LIMIT_MB: "2048"
+    ports:
+      # Solo loopback del host: se entra por túnel SSH, nunca expuesto a internet.
+      - "127.0.0.1:1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+      - ./db:/scripts:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 2560m
+
+volumes:
+  mssql_data:

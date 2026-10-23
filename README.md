@@ -99,6 +99,31 @@ Notas:
 - No ejecutar `seeds/seed_leads.py` en producción: carga contactos de demostración.
 - `ENVIRONMENT=production` desactiva `create_all` y el endpoint `simular-aprobacion`; el esquema lo controla Alembic.
 
+## SQL Server para BI (opcional, Dokploy)
+
+El esquema `db/oltp_elestablo_v1.sql` es T-SQL para SQL Server y se despliega como stack aparte del stack de la aplicación. No reemplaza al PostgreSQL 18 de `docker-compose.dokploy.yml`.
+
+1. Crear un servicio **Compose** en Dokploy con el mismo repositorio y *Compose Path* `docker-compose.mssql.yml`.
+2. Cargar `MSSQL_SA_PASSWORD` en el entorno de Dokploy. Debe tener 8+ caracteres con mayúscula, minúscula, número y símbolo, o el contenedor no arranca. Si contiene `$`, escaparlo como `$$`.
+3. Desplegar. El contenedor escucha en `127.0.0.1:1433` del host, no en la IP pública.
+4. Importar el esquema una sola vez (el script es idempotente):
+
+   ```bash
+   docker compose exec mssql bash -c \
+     '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -f 65001 -i /scripts/oltp_elestablo_v1.sql'
+   ```
+
+   `-f 65001` es obligatorio: el archivo es UTF-8 sin BOM y sin eso se corrompen los acentos.
+
+5. Conectar desde fuera con túnel SSH: `ssh -L 1433:127.0.0.1:1433 root@vmi3492739` y apuntar la herramienta BI a `localhost,1433` con usuario `sa`.
+
+Notas:
+
+- RAM: el contenedor está limitado a 2 GB (`MSSQL_MEMORY_LIMIT_MB`). SQL Server no arranca con menos de 2 GB.
+- Edición `Developer`: gratis, sin límite de tamaño, pero sin licencia para producción comercial. Para uso interno de BI es válida.
+- Los datos viven en el volumen `mssql_data`. Respaldo: `docker compose exec mssql bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "BACKUP DATABASE database_parrilla TO DISK = N\"/var/opt/mssql/backup/parrilla.bak\""'`.
+- El stack no tiene dominio asignado ni puerto público: el acceso es solo por túnel.
+
 ## Configuración y límites
 
 La configuración está en `backend/.env`; debe coincidir con las credenciales locales de `docker-compose.yml`. No subir ese archivo a Git. Las migraciones sí deben versionarse.
