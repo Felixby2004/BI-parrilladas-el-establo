@@ -79,7 +79,7 @@ El flujo HTTP de PostgreSQL usa rollback: no deja clientes ni cobros de prueba e
 
 ## Despliegue (Dokploy)
 
-El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend publica un solo puerto y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS.
+El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend escucha en el puerto 80 y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS. Ningún servicio mapea puertos al host: Dokploy publica solo el dominio del servicio `web` a través de Traefik.
 
 1. Crear una aplicación de tipo **Compose** en Dokploy y apuntar al repositorio; archivo de compose: `docker-compose.dokploy.yml`.
 2. Copiar `.env.production.example` a `.env` en el servidor (o cargar las variables en la UI de Dokploy):
@@ -87,8 +87,7 @@ El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, fron
    - `SECRET_KEY` generada con `openssl rand -hex 32`.
    - `MSSQL_SA_PASSWORD` para el servicio de BI (ver sección SQL Server para BI).
    - `MP_ACCESS_TOKEN` y `MP_WEBHOOK_URL` solo si se usará Mercado Pago.
-   - `WEB_PORT` (por defecto 3000) es el puerto del host que Dokploy publica.
-3. Asignar el dominio en Dokploy al servicio `web`, puerto `80`, con certificado Let's Encrypt.
+3. Asignar el dominio en Dokploy al servicio `web` con **Container Port 80** y certificado Let's Encrypt. No se configuran `ports` en el compose: la exposición es exclusivamente por Traefik.
 4. Desplegar. El contenedor `api` ejecuta `alembic upgrade head` antes de arrancar, así que las migraciones se aplican solas en cada despliegue.
 5. Verificar `https://tu-dominio/health` y `https://tu-dominio/formulario`.
 6. Si se usa Mercado Pago, configurar `MP_WEBHOOK_URL=https://tu-dominio/api/v1/pagos/webhook` y volver a desplegar.
@@ -122,7 +121,7 @@ Notas:
 - RAM: el contenedor está limitado a 2 GB (`MSSQL_MEMORY_LIMIT_MB`). SQL Server no arranca con menos de 2 GB.
 - Edición `Developer`: gratis, sin límite de tamaño, pero sin licencia para producción comercial. Para uso interno de BI es válida.
 - Los datos viven en el volumen `mssql_data`. Respaldo: `docker compose exec mssql bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "BACKUP DATABASE database_parrilla TO DISK = N\"/var/opt/mssql/backup/parrilla.bak\""'`.
-- El servicio no tiene dominio asignado ni puerto público: el acceso es solo por túnel.
+- El servicio no tiene dominio asignado ni puerto público: el acceso es solo por túnel (`127.0.0.1:1433` en el host). Es la única excepción a la regla de no mapear puertos en Dokploy.
 - `MSSQL_SA_PASSWORD` solo se aplica al inicializar el volumen. Cambiarla después no altera la contraseña existente.
 
 ## Configuración y límites

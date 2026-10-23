@@ -41,14 +41,17 @@ services:
   web:
     build: ./frontend
     restart: unless-stopped
-    ports:
-      - "${WEB_PORT:-3000}:80"
+    # Sin `ports`: Dokploy publica vía Traefik. Definir el dominio del servicio
+    # `web` con Container Port 80 en el apartado Domains.
+    expose:
+      - "80"
     depends_on:
       api:
         condition: service_healthy
 
   # Base BI (esquema db/oltp_elestablo_v1.sql). No reemplaza a `db` (PostgreSQL).
-  # Sin dominio ni puerto público: el 1433 queda en loopback y se entra por túnel SSH.
+  # EXCEPCIÓN a la regla de no mapear puertos: el 1433 se publica solo en loopback
+  # para entrar por túnel SSH. Nunca queda expuesto en la IP pública.
   # ponytail: 2 GB de SQL Server dentro de 2.5 GB de contenedor por la RAM del VPS.
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
