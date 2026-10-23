@@ -41,10 +41,23 @@ services:
   web:
     build: ./frontend
     restart: unless-stopped
-    # Sin `ports`: Dokploy publica vía Traefik. Definir el dominio del servicio
-    # `web` con Container Port 80 en el apartado Domains.
+    # Sin `ports`: Dokploy publica vía Traefik (red dokploy-network + labels).
     expose:
       - "80"
+    networks:
+      - default
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.establo-web.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.establo-web.entrypoints=websecure"
+      - "traefik.http.routers.establo-web.tls.certResolver=letsencrypt"
+      - "traefik.http.services.establo-web.loadbalancer.server.port=80"
+      # HTTP -> HTTPS (evita 404 al entrar por http://).
+      - "traefik.http.middlewares.establo-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.establo-web-http.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.establo-web-http.entrypoints=web"
+      - "traefik.http.routers.establo-web-http.middlewares=establo-https"
     depends_on:
       api:
         condition: service_healthy
@@ -84,3 +97,8 @@ services:
 volumes:
   pg18_data:
   mssql_data:
+
+# Red que comparte con Traefik (Dokploy). Debe existir en el host: `docker network ls`.
+networks:
+  dokploy-network:
+    external: true

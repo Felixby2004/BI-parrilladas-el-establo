@@ -79,7 +79,7 @@ El flujo HTTP de PostgreSQL usa rollback: no deja clientes ni cobros de prueba e
 
 ## Despliegue (Dokploy)
 
-El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend escucha en el puerto 80 y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS. Ningún servicio mapea puertos al host: Dokploy publica solo el dominio del servicio `web` a través de Traefik.
+El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend escucha en el puerto 80 y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS. El único servicio publicado por Traefik es `web` (labels + red `dokploy-network`); `mssql` es la excepción con loopback para el túnel SSH.
 
 1. Crear una aplicación de tipo **Compose** en Dokploy y apuntar al repositorio; archivo de compose: `docker-compose.dokploy.yml`.
 2. Copiar `.env.production.example` a `.env` en el servidor (o cargar las variables en la UI de Dokploy):
@@ -87,10 +87,13 @@ El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, fron
    - `SECRET_KEY` generada con `openssl rand -hex 32`.
    - `MSSQL_SA_PASSWORD` para el servicio de BI (ver sección SQL Server para BI).
    - `MP_ACCESS_TOKEN` y `MP_WEBHOOK_URL` solo si se usará Mercado Pago.
-3. Asignar el dominio en Dokploy al servicio `web` con **Container Port 80** y certificado Let's Encrypt. No se configuran `ports` en el compose: la exposición es exclusivamente por Traefik.
-4. Desplegar. El contenedor `api` ejecuta `alembic upgrade head` antes de arrancar, así que las migraciones se aplican solas en cada despliegue.
-5. Verificar `https://tu-dominio/health` y `https://tu-dominio/formulario`.
-6. Si se usa Mercado Pago, configurar `MP_WEBHOOK_URL=https://tu-dominio/api/v1/pagos/webhook` y volver a desplegar.
+   - `APP_DOMAIN` con el dominio del frontend (sin `https://`, sin barra final).
+3. DNS: registro **A** de `APP_DOMAIN` apuntando a la IP del VPS.
+4. Verificar que exista la red externa de Traefik: `docker network ls | grep dokploy-network`. Si no existe, crearla con `docker network create dokploy-network`.
+5. Desplegar. Traefik toma el dominio de los labels del servicio `web` (`Container Port 80`, Let's Encrypt) y redirige HTTP a HTTPS. No se configuran `ports` en el compose ni el dominio en la UI de Dokploy: si se agrega en ambos lados, se duplican los routers.
+6. El contenedor `api` ejecuta `alembic upgrade head` antes de arrancar, así que las migraciones se aplican solas en cada despliegue.
+7. Verificar `https://APP_DOMAIN/health` y `https://APP_DOMAIN/formulario`.
+8. Si se usa Mercado Pago, configurar `MP_WEBHOOK_URL=https://APP_DOMAIN/api/v1/pagos/webhook` y volver a desplegar.
 
 Notas:
 
