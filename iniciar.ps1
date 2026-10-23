@@ -18,7 +18,7 @@ if ($Instalar) {
     & $python -m pip install -r backend\requirements.lock.txt
     Confirmar-Comando 'Instalar backend'
     Push-Location frontend
-    try { npm ci; Confirmar-Comando 'Instalar frontend' } finally { Pop-Location }
+    try { pnpm install --frozen-lockfile; Confirmar-Comando 'Instalar frontend' } finally { Pop-Location }
 }
 if (-not (Test-Path backend\.env)) { Copy-Item backend\.env.example backend\.env }
 Push-Location backend
