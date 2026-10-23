@@ -1,0 +1,14 @@
+# Datos y secretos locales
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+*.tsbuildinfo
+*.log
+.npm-cache/
+.browser-test-profile/
+verificacion/

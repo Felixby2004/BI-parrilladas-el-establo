@@ -1,0 +1,21 @@
+# ── Framework ──────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.31.0
+python-multipart>=0.0.9
+
+# ── Base de datos ───────────────────────────────────
+sqlalchemy[asyncio]>=2.0.36
+alembic>=1.13.3
+asyncpg>=0.30.0
+psycopg2-binary>=2.9.9
+
+# ── Configuración ───────────────────────────────────
+pydantic[email]>=2.9.2
+pydantic-settings>=2.5.2
+python-dotenv>=1.0.1
+
+# ── Mercado Pago ─────────────────────────────────────
+mercadopago>=2.2.2
+
+# ── Utilidades ───────────────────────────────────────
+httpx>=0.27.2
