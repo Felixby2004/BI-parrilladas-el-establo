@@ -6,13 +6,14 @@ from datetime import datetime, date, time
 from decimal import Decimal
 from typing import Optional, Literal
 from pydantic import BaseModel, Field, ConfigDict
+from uuid import UUID
 
 
 # ─────────────────────────────────────────
 # PERFIL_GUSTOS
 # ─────────────────────────────────────────
 class PerfilGustosBase(BaseModel):
-    id_lead: int
+    id_lead: UUID
     tipos_corte_preferidos: Optional[str] = None
     termino_coccion: Optional[Literal[
         "ingles", "tres_cuartos", "bien_cocido", "a_punto", "no_aplica"
@@ -32,12 +33,12 @@ class PerfilGustosCreate(PerfilGustosBase):
 
 
 class PerfilGustosUpdate(PerfilGustosBase):
-    id_lead: Optional[int] = None
+    id_lead: Optional[UUID] = None
 
 
 class PerfilGustosRead(PerfilGustosBase):
     model_config = ConfigDict(from_attributes=True)
-    id_perfil_gustos: int
+    id_perfil_gustos: UUID
     created_at: datetime
     updated_at: datetime
 
@@ -50,7 +51,7 @@ EstadoReserva = Literal["tentativa", "confirmada", "cancelada"]
 
 
 class PerfilReservaBase(BaseModel):
-    id_lead: int
+    id_lead: UUID
     fecha_reserva: Optional[date] = None
     hora_inicio: Optional[time] = None
     hora_fin: Optional[time] = None
@@ -71,12 +72,12 @@ class PerfilReservaCreate(PerfilReservaBase):
 
 
 class PerfilReservaUpdate(PerfilReservaBase):
-    id_lead: Optional[int] = None
+    id_lead: Optional[UUID] = None
 
 
 class PerfilReservaRead(PerfilReservaBase):
     model_config = ConfigDict(from_attributes=True)
-    id_perfil_reserva: int
+    id_perfil_reserva: UUID
     created_at: datetime
     updated_at: datetime
 
@@ -89,7 +90,7 @@ TipoMensaje = Literal["texto", "sugerencia", "pedido", "pago", "sistema"]
 
 
 class NegociacionCreate(BaseModel):
-    id_lead: int
+    id_lead: UUID
     remitente: RemitenteChat = "cliente"
     mensaje: str = Field(..., min_length=1)
     tipo_mensaje: TipoMensaje = "texto"
@@ -99,7 +100,7 @@ class NegociacionCreate(BaseModel):
 class NegociacionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id_negociacion: int
-    id_lead: int
+    id_lead: UUID
     remitente: str
     mensaje: str
     tipo_mensaje: Optional[str]
@@ -123,7 +124,7 @@ class DetallePedidoCreate(BaseModel):
 class DetallePedidoRead(DetallePedidoCreate):
     model_config = ConfigDict(from_attributes=True)
     id_detalle: int
-    id_pedido: int
+    id_pedido: UUID
     subtotal: Decimal
     created_at: datetime
 
@@ -135,8 +136,8 @@ EstadoPedido = Literal["borrador", "confirmado", "pagado_adelanto", "completado"
 
 
 class PedidoCreate(BaseModel):
-    id_lead: int
-    id_buyer: int
+    id_lead: UUID
+    id_buyer: UUID
     tipo_pedido: Literal["reserva", "delivery", "salon"] = "reserva"
     notas: Optional[str] = None
     detalles: list[DetallePedidoCreate] = Field(..., min_length=1)
@@ -150,9 +151,9 @@ class PedidoUpdate(BaseModel):
 
 class PedidoRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_pedido: int
-    id_lead: int
-    id_buyer: int
+    id_pedido: UUID
+    id_lead: UUID
+    id_buyer: UUID
     subtotal: Decimal
     descuento: Decimal
     total: Decimal
@@ -169,7 +170,7 @@ class PedidoRead(BaseModel):
 # ─────────────────────────────────────────
 class GenerarAdelanto(BaseModel):
     """Solicita generar un link de pago del 10% (o el % configurado)."""
-    id_pedido: int
+    id_pedido: UUID
     porcentaje: Decimal = Field(Decimal("10.00"), ge=1, le=100)
     pagador_nombre: Optional[str] = None
     pagador_email: Optional[str] = None
@@ -178,9 +179,9 @@ class GenerarAdelanto(BaseModel):
 
 class PagoRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_pago: int
-    id_pedido: int
-    id_lead: int
+    id_pago: UUID
+    id_pedido: UUID
+    id_lead: UUID
     tipo_pago: str
     porcentaje: Optional[Decimal]
     monto: Decimal
@@ -195,7 +196,7 @@ class PagoRead(BaseModel):
 
 class MercadoPagoPreferenceResponse(BaseModel):
     """Respuesta al crear la preferencia de pago."""
-    id_pago: int
+    id_pago: UUID
     preference_id: str
     init_point: str       # URL sandbox para redirigir al cliente
     monto_adelanto: Decimal
@@ -216,7 +217,7 @@ class WebhookMPPayload(BaseModel):
 # ─────────────────────────────────────────
 class Perfil360Read(BaseModel):
     """Vista consolidada para la pantalla de Perfil 360."""
-    id_lead: int
+    id_lead: UUID
     estado_lead: str
 
     # Datos del comprador

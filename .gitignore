@@ -13,3 +13,6 @@ dist/
 .npm-cache/
 .browser-test-profile/
 verificacion/
+# Respaldos de SQL Server: no versionar (pesan cientos de MB)
+db/sqlserver/*.bak
+db/sqlserver/*.bacpac

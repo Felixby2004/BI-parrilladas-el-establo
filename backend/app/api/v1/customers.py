@@ -2,6 +2,7 @@
 ROUTER: CUSTOMERS — Salón, Cocina, Alertas y Reseñas
 """
 from datetime import datetime
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -25,6 +26,29 @@ servicios_router = APIRouter(prefix="/servicios")
 alertas_router   = APIRouter(prefix="/alertas")
 resenas_router   = APIRouter(prefix="/resenas")
 
+ESTADO_SERVICIO_CANONICO = {
+    "en_espera": "EN_PREPARACION",
+    "preparando": "EN_PREPARACION",
+    "servido": "SERVIDO",
+    "finalizado": "FINALIZADO",
+    "cancelado": "CON_INCIDENCIA",
+}
+ESTADO_ITEM_CANONICO = {
+    "pendiente": "PENDIENTE",
+    "preparando": "EN_COCINA",
+    "listo": "EN_COCINA",
+    "entregado": "SERVIDO",
+    "cancelado": "DEVUELTO",
+}
+TIPO_ALERTA_CANONICO = {
+    "tiempo_espera": "RECORDATORIO_CUENTA",
+    "demora_cocina": "RECORDATORIO_CUENTA",
+    "pedido_adicional": "SUGERENCIA_BEBIDA",
+    "vip_mesa": "SUGERENCIA_POSTRE",
+    "incidencia": "SUGERENCIA_POSTRE",
+}
+
+
 
 # ═══════════════════════════════════════════════════════════
 # SERVICIOS / COMANDAS
@@ -47,11 +71,14 @@ async def crear_servicio(payload: ServicioCreate, db: AsyncSession = Depends(get
             raise HTTPException(422, "Los detalles no corresponden al pedido del payer")
     servicio = Servicio(
         id_payer=payload.id_payer,
+        id_lead=payer.id_lead,
         id_mesa=payload.id_mesa,
         prioridad=payload.prioridad,
         notas_cocina=payload.notas_cocina,
         hora_inicio=datetime.utcnow(),
         estado="en_espera",
+        estado_servicio="EN_PREPARACION",
+        tipo_servicio="SALON",
     )
     db.add(servicio); await db.flush()
 
@@ -60,6 +87,7 @@ async def crear_servicio(payload: ServicioCreate, db: AsyncSession = Depends(get
             id_servicio=servicio.id_servicio,
             **det.model_dump(),
             estado_item="pendiente",
+            estado_item_canonico="PENDIENTE",
         )
         db.add(item)
 
@@ -68,7 +96,7 @@ async def crear_servicio(payload: ServicioCreate, db: AsyncSession = Depends(get
         mesa_r = await db.execute(select(Mesa).where(Mesa.id_mesa == payload.id_mesa))
         mesa = mesa_r.scalar_one_or_none()
         if mesa:
-            mesa.estado = "ocupada"
+            mesa.estado = "OCUPADA"
 
     await db.flush()
 
@@ -141,7 +169,7 @@ async def vista_cocina(db: AsyncSession = Depends(get_db)):
 
 @servicios_router.patch("/{id_servicio}/estado", response_model=ServicioRead, summary="Actualizar estado comanda")
 async def actualizar_estado_servicio(
-    id_servicio: int, estado: EstadoServicio, db: AsyncSession = Depends(get_db)
+    id_servicio: UUID, estado: EstadoServicio, db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
         select(Servicio)
@@ -152,11 +180,12 @@ async def actualizar_estado_servicio(
     if not servicio:
         raise HTTPException(404, "Servicio no encontrado")
 
-    servicio.estado = estado
+    servicio.estado = str(estado)
+    servicio.estado_servicio = ESTADO_SERVICIO_CANONICO.get(str(estado), "EN_PREPARACION")
     if estado == "finalizado":
         servicio.hora_fin = datetime.utcnow()
         if servicio.id_mesa and servicio.mesa:
-            servicio.mesa.estado = "disponible"
+            servicio.mesa.estado = "DISPONIBLE"
 
     sr = ServicioRead.model_validate(servicio)
     sr.mesa_numero = servicio.mesa.numero if servicio.mesa else None
@@ -165,8 +194,8 @@ async def actualizar_estado_servicio(
 
 @servicios_router.patch("/{id_servicio}/items/{id_item}", response_model=ServicioDetalleRead, summary="Actualizar estado de ítem")
 async def actualizar_item(
-    id_servicio: int,
-    id_item: int,
+    id_servicio: UUID,
+    id_item: UUID,
     payload: ActualizarItemEstado,
     db: AsyncSession = Depends(get_db),
 ):
@@ -180,6 +209,7 @@ async def actualizar_item(
         raise HTTPException(404, "Ítem no encontrado")
 
     item.estado_item = payload.estado_item
+    item.estado_item_canonico = ESTADO_ITEM_CANONICO.get(payload.estado_item, "PENDIENTE")
 
     # Si todos los items están listos, poner servicio en "servido"
     if payload.estado_item == "listo":
@@ -192,6 +222,7 @@ async def actualizar_item(
             serv = serv_r.scalar_one_or_none()
             if serv and serv.estado == "preparando":
                 serv.estado = "servido"
+                serv.estado_servicio = "SERVIDO"
 
     await db.flush()
     await db.refresh(item, attribute_names=["updated_at"])
@@ -216,13 +247,15 @@ async def crear_alerta(payload: AlertaCreate, db: AsyncSession = Depends(get_db)
     servicio_r = await db.execute(select(Servicio.id_servicio).where(Servicio.id_servicio == payload.id_servicio))
     if servicio_r.scalar_one_or_none() is None:
         raise HTTPException(404, "Servicio no encontrado")
-    alerta = AlertaConsumo(**payload.model_dump())
+    datos = payload.model_dump()
+    datos["tipo_alerta_canonico"] = TIPO_ALERTA_CANONICO.get(datos.get("tipo_alerta", ""), "RECORDATORIO_CUENTA")
+    alerta = AlertaConsumo(**datos)
     db.add(alerta); await db.flush()
     return alerta
 
 
 @alertas_router.patch("/{id_alerta}/atender", response_model=AlertaRead)
-async def atender_alerta(id_alerta: int, atendida_por: str = "Personal", db: AsyncSession = Depends(get_db)):
+async def atender_alerta(id_alerta: UUID, atendida_por: str = "Personal", db: AsyncSession = Depends(get_db)):
     r = await db.execute(select(AlertaConsumo).where(AlertaConsumo.id_alerta == id_alerta))
     alerta = r.scalar_one_or_none()
     if not alerta:
@@ -245,7 +278,7 @@ async def crear_resena(payload: ResenaCreate, db: AsyncSession = Depends(get_db)
         payer_r = await db.execute(select(Payer.id_buyer).where(Payer.id_payer == servicio.id_payer))
         if payer_r.scalar_one_or_none() != payload.id_buyer:
             raise HTTPException(422, "El buyer no corresponde al servicio")
-    resena = ResenaServicio(**payload.model_dump())
+    resena = ResenaServicio(**payload.model_dump(), id_lead=servicio.id_lead)
     db.add(resena); await db.flush()
     return resena
 

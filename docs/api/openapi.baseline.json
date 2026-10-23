@@ -1,0 +1,6969 @@
+{
+  "components": {
+    "schemas": {
+      "ActualizarItemEstado": {
+        "properties": {
+          "estado_item": {
+            "enum": [
+              "pendiente",
+              "preparando",
+              "listo",
+              "entregado",
+              "cancelado"
+            ],
+            "title": "Estado Item",
+            "type": "string"
+          }
+        },
+        "required": [
+          "estado_item"
+        ],
+        "title": "ActualizarItemEstado",
+        "type": "object"
+      },
+      "AlertaCreate": {
+        "properties": {
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "nivel": {
+            "default": "info",
+            "enum": [
+              "info",
+              "warning",
+              "critical"
+            ],
+            "title": "Nivel",
+            "type": "string"
+          },
+          "tipo_alerta": {
+            "enum": [
+              "tiempo_espera",
+              "pedido_adicional",
+              "incidencia",
+              "vip_mesa",
+              "demora_cocina"
+            ],
+            "title": "Tipo Alerta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_servicio",
+          "tipo_alerta",
+          "descripcion"
+        ],
+        "title": "AlertaCreate",
+        "type": "object"
+      },
+      "AlertaRead": {
+        "properties": {
+          "atendida": {
+            "title": "Atendida",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descripcion": {
+            "title": "Descripcion",
+            "type": "string"
+          },
+          "id_alerta": {
+            "title": "Id Alerta",
+            "type": "integer"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "nivel": {
+            "title": "Nivel",
+            "type": "string"
+          },
+          "tipo_alerta": {
+            "title": "Tipo Alerta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_alerta",
+          "id_servicio",
+          "tipo_alerta",
+          "descripcion",
+          "nivel",
+          "atendida",
+          "created_at"
+        ],
+        "title": "AlertaRead",
+        "type": "object"
+      },
+      "AnuncioCreate": {
+        "properties": {
+          "copy_texto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copy Texto"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activo",
+              "pausado",
+              "archivado"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_campana": {
+            "title": "Id Campana",
+            "type": "integer"
+          },
+          "imagen_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagen Url"
+          },
+          "plataforma": {
+            "anyOf": [
+              {
+                "enum": [
+                  "facebook",
+                  "instagram",
+                  "google",
+                  "tiktok",
+                  "whatsapp",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plataforma"
+          },
+          "titulo": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Titulo",
+            "type": "string"
+          },
+          "url_destino": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Destino"
+          }
+        },
+        "required": [
+          "id_campana",
+          "titulo"
+        ],
+        "title": "AnuncioCreate",
+        "type": "object"
+      },
+      "AnuncioRead": {
+        "properties": {
+          "clics": {
+            "title": "Clics",
+            "type": "integer"
+          },
+          "copy_texto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copy Texto"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activo",
+              "pausado",
+              "archivado"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_anuncio": {
+            "title": "Id Anuncio",
+            "type": "integer"
+          },
+          "id_campana": {
+            "title": "Id Campana",
+            "type": "integer"
+          },
+          "imagen_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagen Url"
+          },
+          "impresiones": {
+            "title": "Impresiones",
+            "type": "integer"
+          },
+          "plataforma": {
+            "anyOf": [
+              {
+                "enum": [
+                  "facebook",
+                  "instagram",
+                  "google",
+                  "tiktok",
+                  "whatsapp",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plataforma"
+          },
+          "titulo": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Titulo",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "url_destino": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Destino"
+          }
+        },
+        "required": [
+          "id_campana",
+          "titulo",
+          "id_anuncio",
+          "impresiones",
+          "clics",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "AnuncioRead",
+        "type": "object"
+      },
+      "AnuncioUpdate": {
+        "properties": {
+          "copy_texto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copy Texto"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activo",
+              "pausado",
+              "archivado"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_campana": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Campana"
+          },
+          "imagen_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Imagen Url"
+          },
+          "plataforma": {
+            "anyOf": [
+              {
+                "enum": [
+                  "facebook",
+                  "instagram",
+                  "google",
+                  "tiktok",
+                  "whatsapp",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plataforma"
+          },
+          "titulo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titulo"
+          },
+          "url_destino": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Destino"
+          }
+        },
+        "title": "AnuncioUpdate",
+        "type": "object"
+      },
+      "BuyerPersonaRead": {
+        "properties": {
+          "activo": {
+            "default": true,
+            "title": "Activo",
+            "type": "boolean"
+          },
+          "canales_preferidos": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canales Preferidos"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "edad_max": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edad Max"
+          },
+          "edad_min": {
+            "anyOf": [
+              {
+                "maximum": 120.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edad Min"
+          },
+          "id_buyer_persona": {
+            "title": "Id Buyer Persona",
+            "type": "integer"
+          },
+          "id_tipo_buyer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Tipo Buyer"
+          },
+          "intereses": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intereses"
+          },
+          "motivaciones": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivaciones"
+          },
+          "nombre": {
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Nombre",
+            "type": "string"
+          },
+          "tipo_buyer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TipoBuyerRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre",
+          "id_buyer_persona",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BuyerPersonaRead",
+        "type": "object"
+      },
+      "BuyerRead": {
+        "properties": {
+          "activo": {
+            "title": "Activo",
+            "type": "boolean"
+          },
+          "apellido": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apellido"
+          },
+          "canal_captacion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canal Captacion"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "etapa_impulse": {
+            "title": "Etapa Impulse",
+            "type": "string"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          },
+          "telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefono"
+          }
+        },
+        "required": [
+          "id_buyer",
+          "nombre",
+          "etapa_impulse",
+          "activo",
+          "created_at"
+        ],
+        "title": "BuyerRead",
+        "type": "object"
+      },
+      "CampanaCreate": {
+        "properties": {
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activa",
+              "pausada",
+              "finalizada"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_fin": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Fin"
+          },
+          "fecha_inicio": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Inicio"
+          },
+          "id_buyer_persona": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer Persona"
+          },
+          "nombre": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Nombre",
+            "type": "string"
+          },
+          "objetivo": {
+            "anyOf": [
+              {
+                "enum": [
+                  "captacion",
+                  "branding",
+                  "retargeting",
+                  "reactivacion"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objetivo"
+          },
+          "presupuesto_total": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Total"
+          }
+        },
+        "required": [
+          "nombre"
+        ],
+        "title": "CampanaCreate",
+        "type": "object"
+      },
+      "CampanaRead": {
+        "properties": {
+          "buyer_persona": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BuyerPersonaRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activa",
+              "pausada",
+              "finalizada"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_fin": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Fin"
+          },
+          "fecha_inicio": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Inicio"
+          },
+          "id_buyer_persona": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer Persona"
+          },
+          "id_campana": {
+            "title": "Id Campana",
+            "type": "integer"
+          },
+          "nombre": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Nombre",
+            "type": "string"
+          },
+          "objetivo": {
+            "anyOf": [
+              {
+                "enum": [
+                  "captacion",
+                  "branding",
+                  "retargeting",
+                  "reactivacion"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objetivo"
+          },
+          "presupuesto_gastado": {
+            "title": "Presupuesto Gastado",
+            "type": "string"
+          },
+          "presupuesto_total": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Total"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre",
+          "id_campana",
+          "presupuesto_gastado",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CampanaRead",
+        "type": "object"
+      },
+      "CampanaUpdate": {
+        "properties": {
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "estado": {
+            "default": "borrador",
+            "enum": [
+              "borrador",
+              "activa",
+              "pausada",
+              "finalizada"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_fin": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Fin"
+          },
+          "fecha_inicio": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Inicio"
+          },
+          "id_buyer_persona": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer Persona"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "objetivo": {
+            "anyOf": [
+              {
+                "enum": [
+                  "captacion",
+                  "branding",
+                  "retargeting",
+                  "reactivacion"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objetivo"
+          },
+          "presupuesto_total": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Total"
+          }
+        },
+        "title": "CampanaUpdate",
+        "type": "object"
+      },
+      "CobrarSaldoRequest": {
+        "properties": {
+          "id_payer": {
+            "title": "Id Payer",
+            "type": "integer"
+          },
+          "monto": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monto"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "procesado_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "Cajero",
+            "title": "Procesado Por"
+          },
+          "tipo_pago": {
+            "default": "mercado_pago",
+            "enum": [
+              "efectivo",
+              "tarjeta",
+              "mercado_pago",
+              "transferencia"
+            ],
+            "title": "Tipo Pago",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_payer"
+        ],
+        "title": "CobrarSaldoRequest",
+        "type": "object"
+      },
+      "CobrarSaldoResponse": {
+        "properties": {
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "folio": {
+            "title": "Folio",
+            "type": "string"
+          },
+          "id_comprobante": {
+            "title": "Id Comprobante",
+            "type": "integer"
+          },
+          "id_instruccion": {
+            "title": "Id Instruccion",
+            "type": "integer"
+          },
+          "mensaje": {
+            "title": "Mensaje",
+            "type": "string"
+          },
+          "total_cobrado": {
+            "title": "Total Cobrado",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_instruccion",
+          "id_comprobante",
+          "folio",
+          "total_cobrado",
+          "estado",
+          "mensaje"
+        ],
+        "title": "CobrarSaldoResponse",
+        "type": "object"
+      },
+      "ComandaCocinaRead": {
+        "description": "Vista simplificada para la pantalla de cocina.",
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ServicioDetalleRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "mesa_numero": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mesa Numero"
+          },
+          "prioridad": {
+            "title": "Prioridad",
+            "type": "string"
+          },
+          "tiempo_espera_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tiempo Espera Min"
+          }
+        },
+        "required": [
+          "id_servicio",
+          "mesa_numero",
+          "prioridad",
+          "estado",
+          "tiempo_espera_min",
+          "items",
+          "created_at"
+        ],
+        "title": "ComandaCocinaRead",
+        "type": "object"
+      },
+      "ComprobanteRead": {
+        "properties": {
+          "adelanto_aplicado": {
+            "title": "Adelanto Aplicado",
+            "type": "string"
+          },
+          "cliente_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Nombre"
+          },
+          "cliente_telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Telefono"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descuento": {
+            "title": "Descuento",
+            "type": "string"
+          },
+          "folio": {
+            "title": "Folio",
+            "type": "string"
+          },
+          "generado_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generado Por"
+          },
+          "id_comprobante": {
+            "title": "Id Comprobante",
+            "type": "integer"
+          },
+          "id_payer": {
+            "title": "Id Payer",
+            "type": "integer"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "metodo_pago_saldo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metodo Pago Saldo"
+          },
+          "observaciones": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observaciones"
+          },
+          "saldo_cobrado": {
+            "title": "Saldo Cobrado",
+            "type": "string"
+          },
+          "subtotal": {
+            "title": "Subtotal",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_comprobante",
+          "id_payer",
+          "id_pedido",
+          "folio",
+          "subtotal",
+          "descuento",
+          "total",
+          "adelanto_aplicado",
+          "saldo_cobrado",
+          "metodo_pago_saldo",
+          "generado_por",
+          "cliente_nombre",
+          "cliente_telefono",
+          "observaciones",
+          "created_at"
+        ],
+        "title": "ComprobanteRead",
+        "type": "object"
+      },
+      "CreativeRequest": {
+        "properties": {
+          "formato": {
+            "default": "9:16",
+            "enum": [
+              "9:16",
+              "4:5"
+            ],
+            "title": "Formato",
+            "type": "string"
+          },
+          "llamada_accion": {
+            "default": "Reserva tu mesa",
+            "maxLength": 100,
+            "title": "Llamada Accion",
+            "type": "string"
+          },
+          "prompt": {
+            "maxLength": 5000,
+            "minLength": 15,
+            "title": "Prompt",
+            "type": "string"
+          },
+          "texto_publicitario": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Texto Publicitario",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "CreativeRequest",
+        "type": "object"
+      },
+      "CreativeResponse": {
+        "properties": {
+          "advertencia": {
+            "default": "Contenido generado con IA. Revisa texto, precios y composición antes de publicar.",
+            "title": "Advertencia",
+            "type": "string"
+          },
+          "alto": {
+            "title": "Alto",
+            "type": "integer"
+          },
+          "ancho": {
+            "title": "Ancho",
+            "type": "integer"
+          },
+          "brief": {
+            "title": "Brief",
+            "type": "string"
+          },
+          "formato": {
+            "title": "Formato",
+            "type": "string"
+          },
+          "imagen_base64": {
+            "title": "Imagen Base64",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "modelo": {
+            "title": "Modelo",
+            "type": "string"
+          },
+          "proveedor": {
+            "default": "Google Gemini",
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "texto": {
+            "title": "Texto",
+            "type": "string"
+          }
+        },
+        "required": [
+          "modelo",
+          "formato",
+          "mime_type",
+          "imagen_base64",
+          "ancho",
+          "alto",
+          "texto",
+          "brief"
+        ],
+        "title": "CreativeResponse",
+        "type": "object"
+      },
+      "DetallePedidoCreate": {
+        "properties": {
+          "cantidad": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Cantidad",
+            "type": "integer"
+          },
+          "categoria": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categoria"
+          },
+          "id_producto": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Producto"
+          },
+          "nombre_producto": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nombre Producto",
+            "type": "string"
+          },
+          "notas_especiales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Especiales"
+          },
+          "precio_unitario": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Precio Unitario"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          }
+        },
+        "required": [
+          "nombre_producto",
+          "precio_unitario"
+        ],
+        "title": "DetallePedidoCreate",
+        "type": "object"
+      },
+      "DetallePedidoRead": {
+        "properties": {
+          "cantidad": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Cantidad",
+            "type": "integer"
+          },
+          "categoria": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categoria"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id_detalle": {
+            "title": "Id Detalle",
+            "type": "integer"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "id_producto": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Producto"
+          },
+          "nombre_producto": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nombre Producto",
+            "type": "string"
+          },
+          "notas_especiales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Especiales"
+          },
+          "precio_unitario": {
+            "title": "Precio Unitario",
+            "type": "string"
+          },
+          "subtotal": {
+            "title": "Subtotal",
+            "type": "string"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          }
+        },
+        "required": [
+          "nombre_producto",
+          "precio_unitario",
+          "id_detalle",
+          "id_pedido",
+          "subtotal",
+          "created_at"
+        ],
+        "title": "DetallePedidoRead",
+        "type": "object"
+      },
+      "FormularioCaptacionCreate": {
+        "description": "Payload del formulario público — NO requiere autenticación.",
+        "properties": {
+          "canal": {
+            "anyOf": [
+              {
+                "maxLength": 50,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canal"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "format": "email",
+                "maxLength": 150,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "juan@correo.com"
+            ],
+            "title": "Email"
+          },
+          "fecha_preferida": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Preferida"
+          },
+          "interes": {
+            "default": "informacion",
+            "enum": [
+              "reserva",
+              "informacion",
+              "evento",
+              "otro"
+            ],
+            "title": "Interes",
+            "type": "string"
+          },
+          "mensaje": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mensaje"
+          },
+          "nombre": {
+            "examples": [
+              "Juan Pérez"
+            ],
+            "maxLength": 150,
+            "minLength": 2,
+            "title": "Nombre",
+            "type": "string"
+          },
+          "personas_aproximadas": {
+            "anyOf": [
+              {
+                "maximum": 500.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personas Aproximadas"
+          },
+          "telefono": {
+            "examples": [
+              "+5491112345678"
+            ],
+            "maxLength": 30,
+            "minLength": 7,
+            "title": "Telefono",
+            "type": "string"
+          },
+          "utm_campaign": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utm Campaign"
+          },
+          "utm_medium": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utm Medium"
+          },
+          "utm_source": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Utm Source"
+          }
+        },
+        "required": [
+          "nombre",
+          "telefono"
+        ],
+        "title": "FormularioCaptacionCreate",
+        "type": "object"
+      },
+      "FormularioCaptacionRead": {
+        "properties": {
+          "buyer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BuyerRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "canal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canal"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "fecha_captacion": {
+            "format": "date-time",
+            "title": "Fecha Captacion",
+            "type": "string"
+          },
+          "fecha_preferida": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Preferida"
+          },
+          "id_formulario": {
+            "title": "Id Formulario",
+            "type": "integer"
+          },
+          "interes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interes"
+          },
+          "mensaje": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mensaje"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          },
+          "personas_aproximadas": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personas Aproximadas"
+          },
+          "procesado": {
+            "title": "Procesado",
+            "type": "boolean"
+          },
+          "telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefono"
+          }
+        },
+        "required": [
+          "id_formulario",
+          "nombre",
+          "telefono",
+          "email",
+          "interes",
+          "mensaje",
+          "personas_aproximadas",
+          "fecha_preferida",
+          "canal",
+          "procesado",
+          "fecha_captacion"
+        ],
+        "title": "FormularioCaptacionRead",
+        "type": "object"
+      },
+      "FormularioCaptacionResponse": {
+        "properties": {
+          "id_buyer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer"
+          },
+          "id_formulario": {
+            "title": "Id Formulario",
+            "type": "integer"
+          },
+          "id_lead": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Lead"
+          },
+          "mensaje": {
+            "default": "¡Gracias! Nos pondremos en contacto contigo pronto.",
+            "title": "Mensaje",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_formulario",
+          "id_buyer",
+          "id_lead"
+        ],
+        "title": "FormularioCaptacionResponse",
+        "type": "object"
+      },
+      "GenerarAdelanto": {
+        "description": "Solicita generar un link de pago del 10% (o el % configurado).",
+        "properties": {
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "pagador_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagador Email"
+          },
+          "pagador_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagador Nombre"
+          },
+          "porcentaje": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 1.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "10.00",
+            "title": "Porcentaje"
+          },
+          "url_retorno": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "http://localhost:5173/leads",
+            "title": "Url Retorno"
+          }
+        },
+        "required": [
+          "id_pedido"
+        ],
+        "title": "GenerarAdelanto",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HermesMensajeCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "direccion": {
+            "default": "entrante",
+            "enum": [
+              "entrante",
+              "saliente"
+            ],
+            "title": "Direccion",
+            "type": "string"
+          },
+          "mensaje": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Mensaje",
+            "type": "string"
+          },
+          "message_id": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Message Id",
+            "type": "string"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "remitente": {
+            "default": "cliente",
+            "enum": [
+              "cliente",
+              "agente",
+              "bot"
+            ],
+            "title": "Remitente",
+            "type": "string"
+          },
+          "telefono": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Telefono",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mensaje",
+          "telefono",
+          "message_id"
+        ],
+        "title": "HermesMensajeCreate",
+        "type": "object"
+      },
+      "HermesMensajeRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "duplicado": {
+            "title": "Duplicado",
+            "type": "boolean"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_negociacion": {
+            "title": "Id Negociacion",
+            "type": "integer"
+          },
+          "message_id": {
+            "title": "Message Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "duplicado",
+          "id_buyer",
+          "id_lead",
+          "id_negociacion",
+          "created_at"
+        ],
+        "title": "HermesMensajeRead",
+        "type": "object"
+      },
+      "KanbanStats": {
+        "properties": {
+          "contactado": {
+            "default": 0,
+            "title": "Contactado",
+            "type": "integer"
+          },
+          "ganado": {
+            "default": 0,
+            "title": "Ganado",
+            "type": "integer"
+          },
+          "nuevo": {
+            "default": 0,
+            "title": "Nuevo",
+            "type": "integer"
+          },
+          "perdido": {
+            "default": 0,
+            "title": "Perdido",
+            "type": "integer"
+          },
+          "respondio": {
+            "default": 0,
+            "title": "Respondio",
+            "type": "integer"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "title": "KanbanStats",
+        "type": "object"
+      },
+      "LeadKanbanRead": {
+        "description": "Vista resumida para las tarjetas Kanban.",
+        "properties": {
+          "buyer_canal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Canal"
+          },
+          "buyer_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Email"
+          },
+          "buyer_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Nombre"
+          },
+          "buyer_telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Telefono"
+          },
+          "campana_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Campana Nombre"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_preferida": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Preferida"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "interes_confirmado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interes Confirmado"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "personas_estimadas": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personas Estimadas"
+          },
+          "presupuesto_estimado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Estimado"
+          }
+        },
+        "required": [
+          "id_lead",
+          "estado",
+          "interes_confirmado",
+          "personas_estimadas",
+          "fecha_preferida",
+          "presupuesto_estimado",
+          "notas",
+          "created_at"
+        ],
+        "title": "LeadKanbanRead",
+        "type": "object"
+      },
+      "LeadRead": {
+        "properties": {
+          "buyer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BuyerRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "campana": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CampanaRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "default": "nuevo",
+            "enum": [
+              "nuevo",
+              "contactado",
+              "respondio",
+              "ganado",
+              "perdido"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_contacto": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Contacto"
+          },
+          "fecha_preferida": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Preferida"
+          },
+          "fecha_respuesta": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Respuesta"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_campana": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Campana"
+          },
+          "id_formulario": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Formulario"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "interes_confirmado": {
+            "anyOf": [
+              {
+                "enum": [
+                  "reserva",
+                  "evento",
+                  "consulta",
+                  "informacion",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interes Confirmado"
+          },
+          "motivo_perdida": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Perdida"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "personas_estimadas": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Personas Estimadas"
+          },
+          "presupuesto_estimado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Estimado"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_buyer",
+          "id_lead",
+          "id_formulario",
+          "fecha_contacto",
+          "fecha_respuesta",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "LeadRead",
+        "type": "object"
+      },
+      "LeadUpdateEstado": {
+        "description": "Mover tarjeta en el Kanban.",
+        "properties": {
+          "estado": {
+            "enum": [
+              "nuevo",
+              "contactado",
+              "respondio",
+              "ganado",
+              "perdido"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "motivo_perdida": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Perdida"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          }
+        },
+        "required": [
+          "estado"
+        ],
+        "title": "LeadUpdateEstado",
+        "type": "object"
+      },
+      "MercadoPagoPreferenceResponse": {
+        "description": "Respuesta al crear la preferencia de pago.",
+        "properties": {
+          "id_pago": {
+            "title": "Id Pago",
+            "type": "integer"
+          },
+          "init_point": {
+            "title": "Init Point",
+            "type": "string"
+          },
+          "mensaje": {
+            "title": "Mensaje",
+            "type": "string"
+          },
+          "monto_adelanto": {
+            "title": "Monto Adelanto",
+            "type": "string"
+          },
+          "preference_id": {
+            "title": "Preference Id",
+            "type": "string"
+          },
+          "total_pedido": {
+            "title": "Total Pedido",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_pago",
+          "preference_id",
+          "init_point",
+          "monto_adelanto",
+          "total_pedido",
+          "mensaje"
+        ],
+        "title": "MercadoPagoPreferenceResponse",
+        "type": "object"
+      },
+      "MesaCreate": {
+        "properties": {
+          "activa": {
+            "default": true,
+            "title": "Activa",
+            "type": "boolean"
+          },
+          "capacidad": {
+            "default": 4,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Capacidad",
+            "type": "integer"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "estado": {
+            "default": "disponible",
+            "enum": [
+              "disponible",
+              "ocupada",
+              "reservada",
+              "mantenimiento"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "enum": [
+                  "salon",
+                  "terraza",
+                  "privado",
+                  "barra"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "salon",
+            "title": "Sector"
+          }
+        },
+        "required": [
+          "numero"
+        ],
+        "title": "MesaCreate",
+        "type": "object"
+      },
+      "MesaRead": {
+        "properties": {
+          "activa": {
+            "default": true,
+            "title": "Activa",
+            "type": "boolean"
+          },
+          "capacidad": {
+            "default": 4,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Capacidad",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "estado": {
+            "default": "disponible",
+            "enum": [
+              "disponible",
+              "ocupada",
+              "reservada",
+              "mantenimiento"
+            ],
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_mesa": {
+            "title": "Id Mesa",
+            "type": "integer"
+          },
+          "numero": {
+            "title": "Numero",
+            "type": "string"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "enum": [
+                  "salon",
+                  "terraza",
+                  "privado",
+                  "barra"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "salon",
+            "title": "Sector"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "numero",
+          "id_mesa",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MesaRead",
+        "type": "object"
+      },
+      "NegociacionCreate": {
+        "properties": {
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "mensaje": {
+            "minLength": 1,
+            "title": "Mensaje",
+            "type": "string"
+          },
+          "metadata_json": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata Json"
+          },
+          "remitente": {
+            "default": "cliente",
+            "enum": [
+              "bot",
+              "agente",
+              "cliente"
+            ],
+            "title": "Remitente",
+            "type": "string"
+          },
+          "tipo_mensaje": {
+            "default": "texto",
+            "enum": [
+              "texto",
+              "sugerencia",
+              "pedido",
+              "pago",
+              "sistema"
+            ],
+            "title": "Tipo Mensaje",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_lead",
+          "mensaje"
+        ],
+        "title": "NegociacionCreate",
+        "type": "object"
+      },
+      "NegociacionRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_negociacion": {
+            "title": "Id Negociacion",
+            "type": "integer"
+          },
+          "leido": {
+            "title": "Leido",
+            "type": "boolean"
+          },
+          "mensaje": {
+            "title": "Mensaje",
+            "type": "string"
+          },
+          "remitente": {
+            "title": "Remitente",
+            "type": "string"
+          },
+          "tipo_mensaje": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Mensaje"
+          }
+        },
+        "required": [
+          "id_negociacion",
+          "id_lead",
+          "remitente",
+          "mensaje",
+          "tipo_mensaje",
+          "leido",
+          "created_at"
+        ],
+        "title": "NegociacionRead",
+        "type": "object"
+      },
+      "PagoRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_pago": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Pago"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_pago": {
+            "title": "Id Pago",
+            "type": "integer"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "monto": {
+            "title": "Monto",
+            "type": "string"
+          },
+          "mp_init_point": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mp Init Point"
+          },
+          "mp_payment_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mp Payment Id"
+          },
+          "mp_preference_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mp Preference Id"
+          },
+          "mp_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mp Status"
+          },
+          "porcentaje": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Porcentaje"
+          },
+          "tipo_pago": {
+            "title": "Tipo Pago",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_pago",
+          "id_pedido",
+          "id_lead",
+          "tipo_pago",
+          "porcentaje",
+          "monto",
+          "estado",
+          "mp_preference_id",
+          "mp_payment_id",
+          "mp_status",
+          "mp_init_point",
+          "fecha_pago",
+          "created_at"
+        ],
+        "title": "PagoRead",
+        "type": "object"
+      },
+      "PayerCreate": {
+        "properties": {
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_mesa": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Mesa"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "monto_adelanto_pagado": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0.00",
+            "title": "Monto Adelanto Pagado"
+          },
+          "monto_saldo": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0.00",
+            "title": "Monto Saldo"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "total_pedido": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "default": "0.00",
+            "title": "Total Pedido"
+          }
+        },
+        "required": [
+          "id_lead",
+          "id_pedido",
+          "id_buyer"
+        ],
+        "title": "PayerCreate",
+        "type": "object"
+      },
+      "PayerRead": {
+        "properties": {
+          "buyer_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Nombre"
+          },
+          "buyer_telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Telefono"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "fecha_llegada": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Llegada"
+          },
+          "fecha_pago_saldo": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Pago Saldo"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_mesa": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Mesa"
+          },
+          "id_payer": {
+            "title": "Id Payer",
+            "type": "integer"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "mesa_numero": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mesa Numero"
+          },
+          "monto_adelanto_pagado": {
+            "title": "Monto Adelanto Pagado",
+            "type": "string"
+          },
+          "monto_saldo": {
+            "title": "Monto Saldo",
+            "type": "string"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "total_pedido": {
+            "title": "Total Pedido",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_payer",
+          "id_lead",
+          "id_pedido",
+          "id_buyer",
+          "id_mesa",
+          "estado",
+          "fecha_llegada",
+          "fecha_pago_saldo",
+          "monto_adelanto_pagado",
+          "monto_saldo",
+          "total_pedido",
+          "notas",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PayerRead",
+        "type": "object"
+      },
+      "PayerUpdate": {
+        "properties": {
+          "estado": {
+            "anyOf": [
+              {
+                "enum": [
+                  "esperando",
+                  "en_proceso",
+                  "saldo_pagado",
+                  "finalizado"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estado"
+          },
+          "id_mesa": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Mesa"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          }
+        },
+        "title": "PayerUpdate",
+        "type": "object"
+      },
+      "PedidoCreate": {
+        "properties": {
+          "detalles": {
+            "items": {
+              "$ref": "#/components/schemas/DetallePedidoCreate"
+            },
+            "minItems": 1,
+            "title": "Detalles",
+            "type": "array"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "tipo_pedido": {
+            "default": "reserva",
+            "enum": [
+              "reserva",
+              "delivery",
+              "salon"
+            ],
+            "title": "Tipo Pedido",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_lead",
+          "id_buyer",
+          "detalles"
+        ],
+        "title": "PedidoCreate",
+        "type": "object"
+      },
+      "PedidoRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "descuento": {
+            "title": "Descuento",
+            "type": "string"
+          },
+          "detalles": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/DetallePedidoRead"
+            },
+            "title": "Detalles",
+            "type": "array"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "id_buyer": {
+            "title": "Id Buyer",
+            "type": "integer"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_pedido": {
+            "title": "Id Pedido",
+            "type": "integer"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "subtotal": {
+            "title": "Subtotal",
+            "type": "string"
+          },
+          "tipo_pedido": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Pedido"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_pedido",
+          "id_lead",
+          "id_buyer",
+          "subtotal",
+          "descuento",
+          "total",
+          "estado",
+          "tipo_pedido",
+          "notas",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PedidoRead",
+        "type": "object"
+      },
+      "PedidoUpdate": {
+        "properties": {
+          "detalles": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DetallePedidoCreate"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detalles"
+          },
+          "estado": {
+            "anyOf": [
+              {
+                "enum": [
+                  "borrador",
+                  "confirmado",
+                  "pagado_adelanto",
+                  "completado",
+                  "cancelado"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estado"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          }
+        },
+        "title": "PedidoUpdate",
+        "type": "object"
+      },
+      "Perfil360Read": {
+        "description": "Vista consolidada para la pantalla de Perfil 360.",
+        "properties": {
+          "buyer_canal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Canal"
+          },
+          "buyer_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Email"
+          },
+          "buyer_etapa": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Etapa"
+          },
+          "buyer_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Nombre"
+          },
+          "buyer_telefono": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buyer Telefono"
+          },
+          "estado_lead": {
+            "title": "Estado Lead",
+            "type": "string"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "mensajes_recientes": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/NegociacionRead"
+            },
+            "title": "Mensajes Recientes",
+            "type": "array"
+          },
+          "pago_adelanto": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PagoRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pedido_activo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PedidoRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "perfil_gustos": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PerfilGustosRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "perfil_reserva": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PerfilReservaRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id_lead",
+          "estado_lead"
+        ],
+        "title": "Perfil360Read",
+        "type": "object"
+      },
+      "PerfilGustosCreate": {
+        "properties": {
+          "alergias": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alergias"
+          },
+          "bebidas_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bebidas Preferidas"
+          },
+          "entradas_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entradas Preferidas"
+          },
+          "guarniciones_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guarniciones Preferidas"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "notas_adicionales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Adicionales"
+          },
+          "postres_preferidos": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postres Preferidos"
+          },
+          "presupuesto_por_persona": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Por Persona"
+          },
+          "restricciones_dieteticas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restricciones Dieteticas"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ingles",
+                  "tres_cuartos",
+                  "bien_cocido",
+                  "a_punto",
+                  "no_aplica"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          },
+          "tipos_corte_preferidos": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipos Corte Preferidos"
+          }
+        },
+        "required": [
+          "id_lead"
+        ],
+        "title": "PerfilGustosCreate",
+        "type": "object"
+      },
+      "PerfilGustosRead": {
+        "properties": {
+          "alergias": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alergias"
+          },
+          "bebidas_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bebidas Preferidas"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "entradas_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entradas Preferidas"
+          },
+          "guarniciones_preferidas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guarniciones Preferidas"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_perfil_gustos": {
+            "title": "Id Perfil Gustos",
+            "type": "integer"
+          },
+          "notas_adicionales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Adicionales"
+          },
+          "postres_preferidos": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postres Preferidos"
+          },
+          "presupuesto_por_persona": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presupuesto Por Persona"
+          },
+          "restricciones_dieteticas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restricciones Dieteticas"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ingles",
+                  "tres_cuartos",
+                  "bien_cocido",
+                  "a_punto",
+                  "no_aplica"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          },
+          "tipos_corte_preferidos": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipos Corte Preferidos"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_lead",
+          "id_perfil_gustos",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PerfilGustosRead",
+        "type": "object"
+      },
+      "PerfilReservaCreate": {
+        "properties": {
+          "estado_reserva": {
+            "default": "tentativa",
+            "enum": [
+              "tentativa",
+              "confirmada",
+              "cancelada"
+            ],
+            "title": "Estado Reserva",
+            "type": "string"
+          },
+          "fecha_reserva": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Reserva"
+          },
+          "hora_fin": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Fin"
+          },
+          "hora_inicio": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Inicio"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "nombre_festejado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Festejado"
+          },
+          "numero_adultos": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Adultos"
+          },
+          "numero_ninos": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Ninos"
+          },
+          "numero_personas": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Personas"
+          },
+          "ocasion_especial": {
+            "anyOf": [
+              {
+                "enum": [
+                  "cumpleanos",
+                  "aniversario",
+                  "empresa",
+                  "ninguna",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocasion Especial"
+          },
+          "peticiones_especiales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peticiones Especiales"
+          },
+          "requiere_decoracion": {
+            "default": false,
+            "title": "Requiere Decoracion",
+            "type": "boolean"
+          },
+          "requiere_musica": {
+            "default": false,
+            "title": "Requiere Musica",
+            "type": "boolean"
+          },
+          "requiere_pastel": {
+            "default": false,
+            "title": "Requiere Pastel",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id_lead"
+        ],
+        "title": "PerfilReservaCreate",
+        "type": "object"
+      },
+      "PerfilReservaRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado_reserva": {
+            "default": "tentativa",
+            "enum": [
+              "tentativa",
+              "confirmada",
+              "cancelada"
+            ],
+            "title": "Estado Reserva",
+            "type": "string"
+          },
+          "fecha_reserva": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Reserva"
+          },
+          "hora_fin": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Fin"
+          },
+          "hora_inicio": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Inicio"
+          },
+          "id_lead": {
+            "title": "Id Lead",
+            "type": "integer"
+          },
+          "id_perfil_reserva": {
+            "title": "Id Perfil Reserva",
+            "type": "integer"
+          },
+          "nombre_festejado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Festejado"
+          },
+          "numero_adultos": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Adultos"
+          },
+          "numero_ninos": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Ninos"
+          },
+          "numero_personas": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Personas"
+          },
+          "ocasion_especial": {
+            "anyOf": [
+              {
+                "enum": [
+                  "cumpleanos",
+                  "aniversario",
+                  "empresa",
+                  "ninguna",
+                  "otro"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ocasion Especial"
+          },
+          "peticiones_especiales": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peticiones Especiales"
+          },
+          "requiere_decoracion": {
+            "default": false,
+            "title": "Requiere Decoracion",
+            "type": "boolean"
+          },
+          "requiere_musica": {
+            "default": false,
+            "title": "Requiere Musica",
+            "type": "boolean"
+          },
+          "requiere_pastel": {
+            "default": false,
+            "title": "Requiere Pastel",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_lead",
+          "id_perfil_reserva",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "PerfilReservaRead",
+        "type": "object"
+      },
+      "ResenaCreate": {
+        "properties": {
+          "calificacion_ambiente": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Ambiente"
+          },
+          "calificacion_comida": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Comida"
+          },
+          "calificacion_general": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Calificacion General",
+            "type": "integer"
+          },
+          "calificacion_precio": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Precio"
+          },
+          "calificacion_servicio": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Servicio"
+          },
+          "comentario": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comentario"
+          },
+          "id_buyer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "recomendaria": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recomendaria"
+          }
+        },
+        "required": [
+          "id_servicio",
+          "calificacion_general"
+        ],
+        "title": "ResenaCreate",
+        "type": "object"
+      },
+      "ResenaRead": {
+        "properties": {
+          "calificacion_ambiente": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Ambiente"
+          },
+          "calificacion_comida": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Comida"
+          },
+          "calificacion_general": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Calificacion General",
+            "type": "integer"
+          },
+          "calificacion_precio": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Precio"
+          },
+          "calificacion_servicio": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calificacion Servicio"
+          },
+          "comentario": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comentario"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id_buyer": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Buyer"
+          },
+          "id_resena": {
+            "title": "Id Resena",
+            "type": "integer"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "publicar": {
+            "title": "Publicar",
+            "type": "boolean"
+          },
+          "recomendaria": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recomendaria"
+          }
+        },
+        "required": [
+          "id_servicio",
+          "calificacion_general",
+          "id_resena",
+          "publicar",
+          "created_at"
+        ],
+        "title": "ResenaRead",
+        "type": "object"
+      },
+      "ServicioCreate": {
+        "properties": {
+          "detalles": {
+            "items": {
+              "$ref": "#/components/schemas/ServicioDetalleCreate"
+            },
+            "minItems": 1,
+            "title": "Detalles",
+            "type": "array"
+          },
+          "id_mesa": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Mesa"
+          },
+          "id_payer": {
+            "title": "Id Payer",
+            "type": "integer"
+          },
+          "notas_cocina": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Cocina"
+          },
+          "prioridad": {
+            "default": "normal",
+            "enum": [
+              "normal",
+              "urgente",
+              "vip"
+            ],
+            "title": "Prioridad",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_payer",
+          "detalles"
+        ],
+        "title": "ServicioCreate",
+        "type": "object"
+      },
+      "ServicioDetalleCreate": {
+        "properties": {
+          "cantidad": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Cantidad",
+            "type": "integer"
+          },
+          "id_detalle_pedido": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Detalle Pedido"
+          },
+          "nombre_item": {
+            "title": "Nombre Item",
+            "type": "string"
+          },
+          "notas_cocina": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Cocina"
+          },
+          "prioridad": {
+            "default": 1,
+            "title": "Prioridad",
+            "type": "integer"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          },
+          "tiempo_preparacion_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tiempo Preparacion Min"
+          }
+        },
+        "required": [
+          "nombre_item"
+        ],
+        "title": "ServicioDetalleCreate",
+        "type": "object"
+      },
+      "ServicioDetalleRead": {
+        "properties": {
+          "cantidad": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Cantidad",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "estado_item": {
+            "title": "Estado Item",
+            "type": "string"
+          },
+          "id_detalle_pedido": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Detalle Pedido"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "id_servicio_detalle": {
+            "title": "Id Servicio Detalle",
+            "type": "integer"
+          },
+          "nombre_item": {
+            "title": "Nombre Item",
+            "type": "string"
+          },
+          "notas_cocina": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Cocina"
+          },
+          "prioridad": {
+            "default": 1,
+            "title": "Prioridad",
+            "type": "integer"
+          },
+          "termino_coccion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Termino Coccion"
+          },
+          "tiempo_preparacion_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tiempo Preparacion Min"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre_item",
+          "id_servicio_detalle",
+          "id_servicio",
+          "estado_item",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ServicioDetalleRead",
+        "type": "object"
+      },
+      "ServicioRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "detalles": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ServicioDetalleRead"
+            },
+            "title": "Detalles",
+            "type": "array"
+          },
+          "estado": {
+            "title": "Estado",
+            "type": "string"
+          },
+          "hora_fin": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Fin"
+          },
+          "hora_inicio": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Inicio"
+          },
+          "id_mesa": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id Mesa"
+          },
+          "id_payer": {
+            "title": "Id Payer",
+            "type": "integer"
+          },
+          "id_servicio": {
+            "title": "Id Servicio",
+            "type": "integer"
+          },
+          "mesa_numero": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mesa Numero"
+          },
+          "notas_cocina": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas Cocina"
+          },
+          "prioridad": {
+            "title": "Prioridad",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_servicio",
+          "id_payer",
+          "id_mesa",
+          "estado",
+          "prioridad",
+          "hora_inicio",
+          "hora_fin",
+          "notas_cocina",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ServicioRead",
+        "type": "object"
+      },
+      "TipoBuyerRead": {
+        "properties": {
+          "activo": {
+            "title": "Activo",
+            "type": "boolean"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "id_tipo_buyer": {
+            "title": "Id Tipo Buyer",
+            "type": "integer"
+          },
+          "nombre": {
+            "title": "Nombre",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id_tipo_buyer",
+          "nombre",
+          "activo"
+        ],
+        "title": "TipoBuyerRead",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Sistema IMPULSE — Buyers → Leads → Payers → Customers",
+    "title": "Parrilladas El Establo — IMPULSE API",
+    "version": "1.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/alertas": {
+      "get": {
+        "operationId": "listar_alertas_api_v1_alertas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AlertaRead"
+                  },
+                  "title": "Response Listar Alertas Api V1 Alertas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Alertas activas",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      },
+      "post": {
+        "operationId": "crear_alerta_api_v1_alertas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertaCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear Alerta",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/alertas/{id_alerta}/atender": {
+      "patch": {
+        "operationId": "atender_alerta_api_v1_alertas__id_alerta__atender_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_alerta",
+            "required": true,
+            "schema": {
+              "title": "Id Alerta",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "atendida_por",
+            "required": false,
+            "schema": {
+              "default": "Personal",
+              "title": "Atendida Por",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Atender Alerta",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/anuncios": {
+      "get": {
+        "operationId": "listar_anuncios_api_v1_anuncios_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id_campana",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Id Campana"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Skip",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AnuncioRead"
+                  },
+                  "title": "Response Listar Anuncios Api V1 Anuncios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar anuncios",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      },
+      "post": {
+        "operationId": "crear_anuncio_api_v1_anuncios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnuncioCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnuncioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear anuncio",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      }
+    },
+    "/api/v1/anuncios/{id_anuncio}": {
+      "delete": {
+        "operationId": "eliminar_anuncio_api_v1_anuncios__id_anuncio__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_anuncio",
+            "required": true,
+            "schema": {
+              "title": "Id Anuncio",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Eliminar anuncio",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      },
+      "put": {
+        "operationId": "actualizar_anuncio_api_v1_anuncios__id_anuncio__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_anuncio",
+            "required": true,
+            "schema": {
+              "title": "Id Anuncio",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnuncioUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnuncioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar anuncio",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      }
+    },
+    "/api/v1/caja/cobrar-saldo": {
+      "post": {
+        "operationId": "cobrar_saldo_api_v1_caja_cobrar_saldo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CobrarSaldoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CobrarSaldoResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cobrar el saldo restante y generar comprobante",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/caja/comprobante/{id_payer}": {
+      "get": {
+        "operationId": "get_comprobante_api_v1_caja_comprobante__id_payer__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_payer",
+            "required": true,
+            "schema": {
+              "title": "Id Payer",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComprobanteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Comprobante",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/campanas": {
+      "get": {
+        "operationId": "listar_campanas_api_v1_campanas_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Skip",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CampanaRead"
+                  },
+                  "title": "Response Listar Campanas Api V1 Campanas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar campañas",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      },
+      "post": {
+        "operationId": "crear_campana_api_v1_campanas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampanaCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampanaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear campaña",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      }
+    },
+    "/api/v1/campanas/{id_campana}": {
+      "delete": {
+        "operationId": "eliminar_campana_api_v1_campanas__id_campana__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_campana",
+            "required": true,
+            "schema": {
+              "title": "Id Campana",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Eliminar campaña",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      },
+      "get": {
+        "operationId": "detalle_campana_api_v1_campanas__id_campana__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_campana",
+            "required": true,
+            "schema": {
+              "title": "Id Campana",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampanaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detalle campaña",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      },
+      "put": {
+        "operationId": "actualizar_campana_api_v1_campanas__id_campana__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_campana",
+            "required": true,
+            "schema": {
+              "title": "Id Campana",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampanaUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampanaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar campaña",
+        "tags": [
+          "📣 Campañas y Anuncios"
+        ]
+      }
+    },
+    "/api/v1/captacion/formulario": {
+      "post": {
+        "description": "Recibe datos del formulario público, crea un Buyer y un Lead en estado 'nuevo'.",
+        "operationId": "registrar_formulario_api_v1_captacion_formulario_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormularioCaptacionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormularioCaptacionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Registrar formulario público",
+        "tags": [
+          "📋 Captación Pública"
+        ]
+      }
+    },
+    "/api/v1/captacion/formularios": {
+      "get": {
+        "operationId": "listar_formularios_api_v1_captacion_formularios_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Skip",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FormularioCaptacionRead"
+                  },
+                  "title": "Response Listar Formularios Api V1 Captacion Formularios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar formularios recibidos",
+        "tags": [
+          "📋 Captación Pública"
+        ]
+      }
+    },
+    "/api/v1/creativos/configuracion": {
+      "get": {
+        "operationId": "configuracion_api_v1_creativos_configuracion_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Configuracion",
+        "tags": [
+          "Buyers / Estudio creativo"
+        ]
+      }
+    },
+    "/api/v1/creativos/generar": {
+      "post": {
+        "operationId": "generar_api_v1_creativos_generar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreativeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generar",
+        "tags": [
+          "Buyers / Estudio creativo"
+        ]
+      }
+    },
+    "/api/v1/integraciones/hermes/mensajes": {
+      "post": {
+        "operationId": "recibir_mensaje_api_v1_integraciones_hermes_mensajes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HermesMensajeCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HermesMensajeRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recibir texto de WhatsApp registrado por Hermes",
+        "tags": [
+          "Hermes"
+        ]
+      }
+    },
+    "/api/v1/leads": {
+      "get": {
+        "operationId": "listar_leads_api_v1_leads_get",
+        "parameters": [
+          {
+            "description": "Filtrar por estado del Kanban",
+            "in": "query",
+            "name": "estado",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por estado del Kanban",
+              "title": "Estado"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Skip",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LeadKanbanRead"
+                  },
+                  "title": "Response Listar Leads Api V1 Leads Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar leads para el Kanban",
+        "tags": [
+          "🎯 Leads / Kanban"
+        ]
+      }
+    },
+    "/api/v1/leads/stats": {
+      "get": {
+        "operationId": "stats_leads_api_v1_leads_stats_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KanbanStats"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Estadísticas del Kanban",
+        "tags": [
+          "🎯 Leads / Kanban"
+        ]
+      }
+    },
+    "/api/v1/leads/{id_lead}": {
+      "delete": {
+        "operationId": "eliminar_lead_api_v1_leads__id_lead__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Eliminar un lead",
+        "tags": [
+          "🎯 Leads / Kanban"
+        ]
+      },
+      "get": {
+        "operationId": "detalle_lead_api_v1_leads__id_lead__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detalle de un lead",
+        "tags": [
+          "🎯 Leads / Kanban"
+        ]
+      }
+    },
+    "/api/v1/leads/{id_lead}/estado": {
+      "patch": {
+        "operationId": "actualizar_estado_api_v1_leads__id_lead__estado_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadUpdateEstado"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadKanbanRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Mover tarjeta en el Kanban",
+        "tags": [
+          "🎯 Leads / Kanban"
+        ]
+      }
+    },
+    "/api/v1/mesas": {
+      "get": {
+        "operationId": "listar_mesas_api_v1_mesas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MesaRead"
+                  },
+                  "title": "Response Listar Mesas Api V1 Mesas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Listar Mesas",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      },
+      "post": {
+        "operationId": "crear_mesa_api_v1_mesas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MesaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear Mesa",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/mesas/{id_mesa}/estado": {
+      "patch": {
+        "operationId": "actualizar_estado_mesa_api_v1_mesas__id_mesa__estado_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_mesa",
+            "required": true,
+            "schema": {
+              "title": "Id Mesa",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "estado",
+            "required": true,
+            "schema": {
+              "enum": [
+                "disponible",
+                "ocupada",
+                "reservada",
+                "mantenimiento"
+              ],
+              "title": "Estado",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MesaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar Estado Mesa",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/pagos/adelanto": {
+      "post": {
+        "operationId": "generar_adelanto_api_v1_pagos_adelanto_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarAdelanto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MercadoPagoPreferenceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Generar link de pago del adelanto (10%) vía Mercado Pago",
+        "tags": [
+          "💳 Pagos / Mercado Pago"
+        ]
+      }
+    },
+    "/api/v1/pagos/pedido/{id_pedido}": {
+      "get": {
+        "operationId": "pagos_por_pedido_api_v1_pagos_pedido__id_pedido__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pedido",
+            "required": true,
+            "schema": {
+              "title": "Id Pedido",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PagoRead"
+                  },
+                  "title": "Response Pagos Por Pedido Api V1 Pagos Pedido  Id Pedido  Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pagos de un pedido",
+        "tags": [
+          "💳 Pagos / Mercado Pago"
+        ]
+      }
+    },
+    "/api/v1/pagos/simular-aprobacion": {
+      "post": {
+        "description": "Endpoint exclusivo para pruebas en sandbox.\nSimula la aprobación de un pago sin necesidad de la UI de MP.",
+        "operationId": "simular_aprobacion_api_v1_pagos_simular_aprobacion_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id_pago",
+            "required": true,
+            "schema": {
+              "title": "Id Pago",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "⚠️ Solo Sandbox: Simular aprobación de pago",
+        "tags": [
+          "💳 Pagos / Mercado Pago"
+        ]
+      }
+    },
+    "/api/v1/pagos/webhook": {
+      "post": {
+        "description": "Recibe notificaciones de Mercado Pago cuando un pago cambia de estado.\nMercado Pago envía notificaciones con type=\"payment\" y data.id=<payment_id>.",
+        "operationId": "webhook_mercadopago_api_v1_pagos_webhook_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Webhook de Mercado Pago (notificaciones IPN)",
+        "tags": [
+          "💳 Pagos / Mercado Pago"
+        ]
+      }
+    },
+    "/api/v1/pagos/{id_pago}": {
+      "get": {
+        "operationId": "detalle_pago_api_v1_pagos__id_pago__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pago",
+            "required": true,
+            "schema": {
+              "title": "Id Pago",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detalle de un pago",
+        "tags": [
+          "💳 Pagos / Mercado Pago"
+        ]
+      }
+    },
+    "/api/v1/payers": {
+      "get": {
+        "operationId": "listar_payers_api_v1_payers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "estado",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PayerRead"
+                  },
+                  "title": "Response Listar Payers Api V1 Payers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar Payers",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      },
+      "post": {
+        "description": "Registra la llegada de un cliente a caja para pagar el saldo.",
+        "operationId": "crear_payer_api_v1_payers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayerCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear Payer",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/payers/{id_payer}": {
+      "patch": {
+        "operationId": "actualizar_payer_api_v1_payers__id_payer__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_payer",
+            "required": true,
+            "schema": {
+              "title": "Id Payer",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayerUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayerRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar Payer",
+        "tags": [
+          "💳 PAYERS — Caja"
+        ]
+      }
+    },
+    "/api/v1/pedidos": {
+      "get": {
+        "operationId": "listar_pedidos_api_v1_pedidos_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id_lead",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Id Lead"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Skip",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PedidoRead"
+                  },
+                  "title": "Response Listar Pedidos Api V1 Pedidos Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar pedidos",
+        "tags": [
+          "📋 Pedidos"
+        ]
+      },
+      "post": {
+        "operationId": "crear_pedido_api_v1_pedidos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear pedido con detalles",
+        "tags": [
+          "📋 Pedidos"
+        ]
+      }
+    },
+    "/api/v1/pedidos/{id_pedido}": {
+      "delete": {
+        "operationId": "cancelar_pedido_api_v1_pedidos__id_pedido__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pedido",
+            "required": true,
+            "schema": {
+              "title": "Id Pedido",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancelar pedido",
+        "tags": [
+          "📋 Pedidos"
+        ]
+      },
+      "get": {
+        "operationId": "detalle_pedido_api_v1_pedidos__id_pedido__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pedido",
+            "required": true,
+            "schema": {
+              "title": "Id Pedido",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detalle de pedido",
+        "tags": [
+          "📋 Pedidos"
+        ]
+      },
+      "patch": {
+        "operationId": "actualizar_pedido_api_v1_pedidos__id_pedido__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_pedido",
+            "required": true,
+            "schema": {
+              "title": "Id Pedido",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar pedido",
+        "tags": [
+          "📋 Pedidos"
+        ]
+      }
+    },
+    "/api/v1/perfiles/chat": {
+      "post": {
+        "operationId": "enviar_mensaje_api_v1_perfiles_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NegociacionCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NegociacionRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enviar mensaje al chat de negociación",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/chat/{id_lead}": {
+      "get": {
+        "operationId": "historial_chat_api_v1_perfiles_chat__id_lead__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NegociacionRead"
+                  },
+                  "title": "Response Historial Chat Api V1 Perfiles Chat  Id Lead  Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Historial de mensajes del chat",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/gustos": {
+      "post": {
+        "operationId": "upsert_perfil_gustos_api_v1_perfiles_gustos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerfilGustosCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerfilGustosRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear o actualizar perfil de gustos",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/gustos/{id_lead}": {
+      "get": {
+        "operationId": "get_perfil_gustos_api_v1_perfiles_gustos__id_lead__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerfilGustosRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Obtener perfil de gustos",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/reserva": {
+      "post": {
+        "operationId": "upsert_perfil_reserva_api_v1_perfiles_reserva_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerfilReservaCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerfilReservaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Crear o actualizar perfil de reserva",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/reserva/{id_lead}": {
+      "get": {
+        "operationId": "get_perfil_reserva_api_v1_perfiles_reserva__id_lead__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerfilReservaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Obtener perfil de reserva",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/perfiles/{id_lead}/360": {
+      "get": {
+        "operationId": "perfil_360_api_v1_perfiles__id_lead__360_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_lead",
+            "required": true,
+            "schema": {
+              "title": "Id Lead",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Perfil360Read"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Perfil 360 del Lead",
+        "tags": [
+          "👤 Perfiles Lead"
+        ]
+      }
+    },
+    "/api/v1/resenas": {
+      "get": {
+        "operationId": "listar_resenas_api_v1_resenas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ResenaRead"
+                  },
+                  "title": "Response Listar Resenas Api V1 Resenas Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Listar reseñas",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      },
+      "post": {
+        "operationId": "crear_resena_api_v1_resenas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResenaCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResenaRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enviar reseña de 5 estrellas",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/servicios": {
+      "get": {
+        "operationId": "listar_servicios_api_v1_servicios_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "estado",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ServicioRead"
+                  },
+                  "title": "Response Listar Servicios Api V1 Servicios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listar servicios activos",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      },
+      "post": {
+        "operationId": "crear_servicio_api_v1_servicios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServicioCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enviar comanda a cocina",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/servicios/cocina": {
+      "get": {
+        "operationId": "vista_cocina_api_v1_servicios_cocina_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ComandaCocinaRead"
+                  },
+                  "title": "Response Vista Cocina Api V1 Servicios Cocina Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Vista de cocina",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/servicios/{id_servicio}/estado": {
+      "patch": {
+        "operationId": "actualizar_estado_servicio_api_v1_servicios__id_servicio__estado_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_servicio",
+            "required": true,
+            "schema": {
+              "title": "Id Servicio",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "estado",
+            "required": true,
+            "schema": {
+              "enum": [
+                "en_espera",
+                "preparando",
+                "servido",
+                "finalizado",
+                "cancelado"
+              ],
+              "title": "Estado",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicioRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar estado comanda",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/api/v1/servicios/{id_servicio}/items/{id_item}": {
+      "patch": {
+        "operationId": "actualizar_item_api_v1_servicios__id_servicio__items__id_item__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_servicio",
+            "required": true,
+            "schema": {
+              "title": "Id Servicio",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id_item",
+            "required": true,
+            "schema": {
+              "title": "Id Item",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarItemEstado"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServicioDetalleRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Actualizar estado de ítem",
+        "tags": [
+          "🍽️ CUSTOMERS — Salón"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health Check",
+        "tags": [
+          "Health"
+        ]
+      }
+    }
+  }
+}

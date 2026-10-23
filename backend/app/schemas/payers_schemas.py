@@ -5,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, Literal
 from pydantic import BaseModel, Field, ConfigDict
+from uuid import UUID
 
 
 # ─── MESAS ──────────────────────────────────────────────────
@@ -41,9 +42,9 @@ EstadoPayer = Literal["esperando", "en_proceso", "saldo_pagado", "finalizado"]
 
 
 class PayerCreate(BaseModel):
-    id_lead: int
-    id_pedido: int
-    id_buyer: int
+    id_lead: UUID
+    id_pedido: UUID
+    id_buyer: UUID
     id_mesa: Optional[int] = None
     monto_adelanto_pagado: Decimal = Field(Decimal("0.00"), ge=0)
     monto_saldo: Decimal = Field(Decimal("0.00"), ge=0)
@@ -59,10 +60,10 @@ class PayerUpdate(BaseModel):
 
 class PayerRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_payer: int
-    id_lead: int
-    id_pedido: int
-    id_buyer: int
+    id_payer: UUID
+    id_lead: UUID
+    id_pedido: UUID
+    id_buyer: UUID
     id_mesa: Optional[int]
     estado: str
     fecha_llegada: Optional[datetime]
@@ -81,7 +82,7 @@ class PayerRead(BaseModel):
 
 # ─── COBRO DEL SALDO ────────────────────────────────────────
 class CobrarSaldoRequest(BaseModel):
-    id_payer: int
+    id_payer: UUID
     tipo_pago: Literal["efectivo", "tarjeta", "mercado_pago", "transferencia"] = "mercado_pago"
     monto: Optional[Decimal] = Field(None, gt=0, max_digits=10, decimal_places=2)
     procesado_por: Optional[str] = "Cajero"
@@ -89,8 +90,8 @@ class CobrarSaldoRequest(BaseModel):
 
 
 class CobrarSaldoResponse(BaseModel):
-    id_instruccion: int
-    id_comprobante: int
+    id_instruccion: UUID
+    id_comprobante: UUID
     folio: str
     total_cobrado: Decimal
     estado: str
@@ -100,8 +101,8 @@ class CobrarSaldoResponse(BaseModel):
 # ─── INSTRUCCION_PAGO ───────────────────────────────────────
 class InstruccionPagoRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_instruccion: int
-    id_payer: int
+    id_instruccion: UUID
+    id_payer: UUID
     tipo_pago: str
     monto: Decimal
     estado: str
@@ -113,9 +114,9 @@ class InstruccionPagoRead(BaseModel):
 # ─── COMPROBANTE ────────────────────────────────────────────
 class ComprobanteRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_comprobante: int
-    id_payer: int
-    id_pedido: int
+    id_comprobante: UUID
+    id_payer: UUID
+    id_pedido: UUID
     folio: str
     subtotal: Decimal
     descuento: Decimal

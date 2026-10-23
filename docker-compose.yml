@@ -1,22 +1,54 @@
 services:
-  db:
+  # OLTP canónico (esquema portado de db/sqlserver/1_oltp_elestablo_v1.sql).
+  # Los .sql de db/postgres/oltp se aplican solo al inicializar el volumen.
+  db_oltp:
     image: postgres:18-alpine
-    container_name: establo_db
+    container_name: establo_db_oltp
     restart: always
     environment:
-      POSTGRES_USER: establo_user
-      POSTGRES_PASSWORD: establo_pass
-      POSTGRES_DB: establo_db
+      POSTGRES_USER: ${POSTGRES_USER:-establo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-establo_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-establo_oltp}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       # En postgres:18 PGDATA vive dentro de /var/lib/postgresql/<major>/docker.
-      - pg18_data:/var/lib/postgresql
+      - pg18_oltp_data:/var/lib/postgresql
+      - ./db/postgres/oltp:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U establo_user -d establo_db"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # Mart dimensional (db/sqlserver/3_mart_parrilla_estructura_v1.sql).
+  # El ETL lee el OLTP por postgres_fdw con las credenciales OLTP_*.
+  db_mart:
+    image: postgres:18-alpine
+    container_name: establo_db_mart
+    restart: always
+    environment:
+      POSTGRES_USER: ${MART_USER:-establo_mart}
+      POSTGRES_PASSWORD: ${MART_PASSWORD:-establo_mart_pass}
+      POSTGRES_DB: ${MART_DB:-establo_mart}
+      OLTP_HOST: db_oltp
+      OLTP_PORT: 5432
+      OLTP_DB: ${POSTGRES_DB:-establo_oltp}
+      OLTP_USER: ${POSTGRES_USER:-establo_user}
+      OLTP_PASSWORD: ${POSTGRES_PASSWORD:-establo_pass}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pg18_mart_data:/var/lib/postgresql
+      - ./db/postgres/mart:/docker-entrypoint-initdb.d:ro
+    depends_on:
+      db_oltp:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -28,7 +60,11 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - db
+      - db_oltp
+      - db_mart
 
 volumes:
+  pg18_oltp_data:
+  pg18_mart_data:
+  # Volumen legado del esquema Postgres anterior. Se conserva como respaldo.
   pg18_data:

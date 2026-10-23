@@ -2,6 +2,7 @@
 ROUTER: Pedidos — Creación y gestión
 """
 from decimal import Decimal
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -18,6 +19,23 @@ from app.schemas.leads_schemas import (
 
 router = APIRouter(prefix="/pedidos", tags=["📋 Pedidos"])
 
+
+
+
+ESTADO_CANONICO = {
+    "borrador": "PENDIENTE",
+    "pendiente": "PENDIENTE",
+    "confirmado": "PENDIENTE",
+    "pagado_adelanto": "PENDIENTE",
+    "completado": "ENTREGADO",
+    "cancelado": "CANCELADO",
+}
+
+
+def _sincronizar_estado(pedido: Pedido) -> None:
+    """Mantiene el estado canónico que consume el BI."""
+    pedido.estado_pedido = ESTADO_CANONICO.get(pedido.estado, "PENDIENTE")
+    pedido.tipo_consumo = "SALON" if (pedido.tipo_pedido or "").lower() == "salon" else None
 
 def _calcular_totales(detalles_data: list) -> tuple[Decimal, Decimal]:
     """Calcula subtotal y total a partir de los detalles."""
@@ -41,7 +59,7 @@ async def _validar_productos(detalles: list, db: AsyncSession) -> None:
 
 @router.get("", response_model=list[PedidoRead], summary="Listar pedidos")
 async def listar_pedidos(
-    id_lead: int | None = None,
+    id_lead: UUID | None = None,
     skip: int = 0,
     limit: int = 50,
     db: AsyncSession = Depends(get_db),
@@ -82,13 +100,13 @@ async def crear_pedido(payload: PedidoCreate, db: AsyncSession = Depends(get_db)
     # Crear pedido
     pedido = Pedido(
         id_lead=payload.id_lead,
-        id_buyer=payload.id_buyer,
         tipo_pedido=payload.tipo_pedido,
         notas=payload.notas,
         subtotal=subtotal,
         total=total,
         estado="borrador",
     )
+    _sincronizar_estado(pedido)
     db.add(pedido)
     await db.flush()
 
@@ -102,7 +120,6 @@ async def crear_pedido(payload: PedidoCreate, db: AsyncSession = Depends(get_db)
             categoria=det.categoria,
             cantidad=det.cantidad,
             precio_unitario=det.precio_unitario,
-            subtotal=subtotal_det,
             termino_coccion=det.termino_coccion,
             notas_especiales=det.notas_especiales,
         )
@@ -120,7 +137,7 @@ async def crear_pedido(payload: PedidoCreate, db: AsyncSession = Depends(get_db)
 
 
 @router.get("/{id_pedido}", response_model=PedidoRead, summary="Detalle de pedido")
-async def detalle_pedido(id_pedido: int, db: AsyncSession = Depends(get_db)):
+async def detalle_pedido(id_pedido: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Pedido)
         .options(selectinload(Pedido.detalles))
@@ -134,7 +151,7 @@ async def detalle_pedido(id_pedido: int, db: AsyncSession = Depends(get_db)):
 
 @router.patch("/{id_pedido}", response_model=PedidoRead, summary="Actualizar pedido")
 async def actualizar_pedido(
-    id_pedido: int, payload: PedidoUpdate, db: AsyncSession = Depends(get_db)
+    id_pedido: UUID, payload: PedidoUpdate, db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
         select(Pedido)
@@ -169,7 +186,6 @@ async def actualizar_pedido(
                 categoria=det.categoria,
                 cantidad=det.cantidad,
                 precio_unitario=det.precio_unitario,
-                subtotal=sub_det,
                 termino_coccion=det.termino_coccion,
                 notas_especiales=det.notas_especiales,
             )
@@ -180,6 +196,7 @@ async def actualizar_pedido(
 
     if payload.estado:
         pedido.estado = payload.estado
+        _sincronizar_estado(pedido)
     if payload.notas is not None:
         pedido.notas = payload.notas
     await db.flush()
@@ -193,9 +210,10 @@ async def actualizar_pedido(
 
 
 @router.delete("/{id_pedido}", status_code=204, summary="Cancelar pedido")
-async def cancelar_pedido(id_pedido: int, db: AsyncSession = Depends(get_db)):
+async def cancelar_pedido(id_pedido: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Pedido).where(Pedido.id_pedido == id_pedido))
     pedido = result.scalar_one_or_none()
     if not pedido:
         raise HTTPException(404, "Pedido no encontrado")
     pedido.estado = "cancelado"
+    _sincronizar_estado(pedido)

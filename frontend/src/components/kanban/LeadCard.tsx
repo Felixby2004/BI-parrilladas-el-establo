@@ -53,7 +53,7 @@ export function LeadCard({ lead, onSelect }: LeadCardProps) {
     .toUpperCase()
     .slice(0, 2)
 
-  const colorIdx = lead.id_lead % AVATAR_COLORS.length
+  const colorIdx = [...lead.id_lead].reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % AVATAR_COLORS.length
   const ContactIcon = lead.buyer_telefono ? Phone : Mail
   const contacto = lead.buyer_telefono || lead.buyer_email || 'Sin contacto'
 

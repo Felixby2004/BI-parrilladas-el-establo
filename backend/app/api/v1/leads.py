@@ -3,6 +3,7 @@ ROUTER: Leads — Kanban de Oportunidades
 """
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -11,7 +12,7 @@ from sqlalchemy.orm import selectinload
 from app.db.database import get_db
 from app.models.buyers_models import Lead, Campana
 from app.models.base_models import Buyer
-from app.models.leads_models import Pedido, NegociacionLead
+from app.models.leads_models import Pedido, NegociacionLead, MensajeChat, SesionChat
 from app.models.hermes_models import HermesMensaje
 from app.schemas.buyers_schemas import (
     LeadRead,
@@ -100,7 +101,7 @@ async def stats_leads(db: AsyncSession = Depends(get_db)):
     response_model=LeadRead,
     summary="Detalle de un lead",
 )
-async def detalle_lead(id_lead: int, db: AsyncSession = Depends(get_db)):
+async def detalle_lead(id_lead: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Lead)
         .options(selectinload(Lead.buyer), selectinload(Lead.campana).selectinload(Campana.buyer_persona))
@@ -119,7 +120,7 @@ async def detalle_lead(id_lead: int, db: AsyncSession = Depends(get_db)):
     summary="Mover tarjeta en el Kanban",
 )
 async def actualizar_estado(
-    id_lead: int,
+    id_lead: UUID,
     payload: LeadUpdateEstado,
     db: AsyncSession = Depends(get_db),
 ):
@@ -145,11 +146,25 @@ async def actualizar_estado(
     elif payload.estado == "respondio" and not lead.fecha_respuesta:
         lead.fecha_respuesta = now
 
-    # Actualizar etapa del buyer
-    if payload.estado in ("ganado",):
-        await db.execute(
-            select(Buyer).where(Buyer.id_buyer == lead.id_buyer)
+    # Sincronizar el resumen canónico que consume el BI.
+    resumen = await db.execute(select(NegociacionLead).where(NegociacionLead.id_lead == id_lead))
+    negociacion = resumen.scalar_one_or_none()
+    estado_canonico = {
+        "nuevo": "ACTIVA",
+        "contactado": "ACTIVA",
+        "respondio": "ACTIVA",
+        "ganado": "GANADA",
+        "perdido": "PERDIDA",
+    }.get(payload.estado)
+    if negociacion is None and estado_canonico:
+        negociacion = NegociacionLead(
+            id_lead=id_lead,
+            estado_negociacion=estado_canonico,
+            cantidad_interacciones=0,
         )
+        db.add(negociacion)
+    elif negociacion is not None and estado_canonico:
+        negociacion.estado_negociacion = estado_canonico
 
     return _to_kanban(lead)
 
@@ -160,7 +175,7 @@ async def actualizar_estado(
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Eliminar un lead",
 )
-async def eliminar_lead(id_lead: int, db: AsyncSession = Depends(get_db)):
+async def eliminar_lead(id_lead: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Lead).where(Lead.id_lead == id_lead))
     lead = result.scalar_one_or_none()
     if not lead:
@@ -170,8 +185,9 @@ async def eliminar_lead(id_lead: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(409, "No se puede eliminar un lead con pedidos")
     hermes_r = await db.execute(
         select(HermesMensaje.message_id)
-        .join(NegociacionLead, NegociacionLead.id_negociacion == HermesMensaje.id_negociacion)
-        .where(NegociacionLead.id_lead == id_lead).limit(1)
+        .join(MensajeChat, MensajeChat.id_negociacion == HermesMensaje.id_mensaje)
+        .join(SesionChat, SesionChat.id_sesion == MensajeChat.id_sesion)
+        .where(SesionChat.id_lead == id_lead).limit(1)
     )
     if hermes_r.scalar_one_or_none() is not None:
         raise HTTPException(409, "No se puede eliminar un lead con recibos Hermes")

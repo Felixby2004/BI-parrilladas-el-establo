@@ -4,6 +4,7 @@ SCHEMAS PYDANTIC — FASE CUSTOMERS
 from datetime import datetime
 from typing import Optional, Literal
 from pydantic import BaseModel, Field, ConfigDict
+from uuid import UUID
 
 
 # ─── SERVICIO (Comanda) ─────────────────────────────────────
@@ -23,15 +24,15 @@ class ServicioDetalleCreate(BaseModel):
 
 class ServicioDetalleRead(ServicioDetalleCreate):
     model_config = ConfigDict(from_attributes=True)
-    id_servicio_detalle: int
-    id_servicio: int
+    id_servicio_detalle: UUID
+    id_servicio: UUID
     estado_item: str
     created_at: datetime
     updated_at: datetime
 
 
 class ServicioCreate(BaseModel):
-    id_payer: int
+    id_payer: UUID
     id_mesa: Optional[int] = None
     prioridad: PrioridadServicio = "normal"
     notas_cocina: Optional[str] = None
@@ -47,8 +48,8 @@ class ServicioUpdate(BaseModel):
 
 class ServicioRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_servicio: int
-    id_payer: int
+    id_servicio: UUID
+    id_payer: UUID
     id_mesa: Optional[int]
     estado: str
     prioridad: str
@@ -67,7 +68,7 @@ class ActualizarItemEstado(BaseModel):
 
 # ─── ALERTAS ────────────────────────────────────────────────
 class AlertaCreate(BaseModel):
-    id_servicio: int
+    id_servicio: UUID
     tipo_alerta: Literal[
         "tiempo_espera", "pedido_adicional", "incidencia", "vip_mesa", "demora_cocina"
     ]
@@ -77,8 +78,8 @@ class AlertaCreate(BaseModel):
 
 class AlertaRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_alerta: int
-    id_servicio: int
+    id_alerta: UUID
+    id_servicio: UUID
     tipo_alerta: str
     descripcion: str
     nivel: str
@@ -88,8 +89,8 @@ class AlertaRead(BaseModel):
 
 # ─── RESEÑAS ────────────────────────────────────────────────
 class ResenaCreate(BaseModel):
-    id_servicio: int
-    id_buyer: Optional[int] = None
+    id_servicio: UUID
+    id_buyer: Optional[UUID] = None
     calificacion_general: int = Field(..., ge=1, le=5)
     calificacion_comida: Optional[int] = Field(None, ge=1, le=5)
     calificacion_servicio: Optional[int] = Field(None, ge=1, le=5)
@@ -101,7 +102,7 @@ class ResenaCreate(BaseModel):
 
 class ResenaRead(ResenaCreate):
     model_config = ConfigDict(from_attributes=True)
-    id_resena: int
+    id_resena: UUID
     publicar: bool
     created_at: datetime
 
@@ -109,7 +110,7 @@ class ResenaRead(ResenaCreate):
 # ─── VISTA COCINA ────────────────────────────────────────────
 class ComandaCocinaRead(BaseModel):
     """Vista simplificada para la pantalla de cocina."""
-    id_servicio: int
+    id_servicio: UUID
     mesa_numero: Optional[str]
     prioridad: str
     estado: str

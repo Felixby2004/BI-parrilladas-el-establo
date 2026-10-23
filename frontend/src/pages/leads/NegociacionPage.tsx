@@ -30,7 +30,7 @@ const ESTADO_TONE: Record<string, Tone> = {
 export default function NegociacionPage() {
   const { idLead } = useParams<{ idLead: string }>()
   const navigate = useNavigate()
-  const leadId = Number(idLead)
+  const leadId = idLead ?? ''
 
   const [perfil, setPerfil] = useState<Perfil360 | null>(null)
   const [loading, setLoading] = useState(true)
@@ -40,8 +40,8 @@ export default function NegociacionPage() {
   const [itemsPedido, setItemsPedido] = useState<DetallePedido[]>([])
   const [aviso, setAviso] = useState('')
 
-  const [idBuyer, setIdBuyer] = useState<number>(0)
-  const pedidoCargado = useRef<number>()
+  const [idBuyer, setIdBuyer] = useState<string>('')
+  const pedidoCargado = useRef<string>()
   const avisoTimer = useRef<number>()
 
   const mostrarAviso = useCallback((mensaje: string) => {
@@ -53,7 +53,7 @@ export default function NegociacionPage() {
   useEffect(() => () => window.clearTimeout(avisoTimer.current), [])
 
   const fetchPerfil = useCallback(async () => {
-    if (!Number.isInteger(leadId) || leadId <= 0) {
+    if (!leadId) {
       setError('Identificador de lead no válido')
       setLoading(false)
       return
@@ -82,7 +82,7 @@ export default function NegociacionPage() {
     setPerfil(null)
     setItemsPedido([])
     setMpResp(null)
-    setIdBuyer(0)
+    setIdBuyer('')
     pedidoCargado.current = undefined
     fetchPerfil()
   }, [fetchPerfil])

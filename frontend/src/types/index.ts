@@ -8,7 +8,7 @@ export type InteresLead = 'reserva' | 'informacion' | 'evento' | 'otro'
 
 // ─── Buyer ──────────────────────────────────────────────
 export interface Buyer {
-  id_buyer: number
+  id_buyer: string
   nombre: string
   apellido?: string
   telefono?: string
@@ -21,7 +21,7 @@ export interface Buyer {
 
 // ─── Lead (Kanban) ───────────────────────────────────────
 export interface LeadKanban {
-  id_lead: number
+  id_lead: string
   estado: EstadoLead
   interes_confirmado?: InteresLead | 'consulta'
   personas_estimadas?: number
@@ -38,8 +38,8 @@ export interface LeadKanban {
 
 // Detalle mínimo devuelto por GET /leads/{id}; incluye el comprador del pedido.
 export interface LeadDetalle {
-  id_lead: number
-  id_buyer: number
+  id_lead: string
+  id_buyer: string
   estado: EstadoLead
 }
 
@@ -64,7 +64,7 @@ export interface Campana {
   fecha_inicio?: string
   fecha_fin?: string
   estado: EstadoCampana
-  id_buyer_persona?: number
+  id_buyer_persona?: string
   created_at: string
   updated_at: string
 }
@@ -85,9 +85,9 @@ export interface FormularioCaptacionPayload {
 }
 
 export interface FormularioCaptacionResponse {
-  id_formulario: number
-  id_buyer?: number
-  id_lead?: number
+  id_formulario: string
+  id_buyer?: string
+  id_lead?: string
   mensaje: string
 }
 

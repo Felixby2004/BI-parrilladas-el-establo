@@ -1,156 +1,177 @@
+"""Modelos canónicos: catálogos base y buyers.
+
+Los nombres de atributo coinciden con el DTO que consume el frontend; el
+nombre de columna apunta al esquema canónico de SQL Server. Así el contrato
+JSON no cambia y los routers no necesitan saber cómo se llama la columna.
 """
-MODELOS BASE - PARRILLADAS EL ESTABLO
-======================================
-Tablas iniciales para validar la conexión con la BD.
-Basados estrictamente en el esquema BD_parrilla.sql.
-
-Tablas incluidas en este archivo:
-  - tipos_buyer
-  - productos
-  - buyers
-
-El resto de modelos se agregarán fase por fase.
-"""
-
-from datetime import datetime, date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Optional
+from uuid import UUID
 
-from sqlalchemy import (
-    Integer, String, Text, Boolean, Numeric,
-    DateTime, Date, ForeignKey, Enum as SAEnum,
-    func,
-)
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, Numeric, String, Text, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
 
+
+class AreaEmpresa(Base):
+    __tablename__ = "area_empresa"
+
+    id_area: Mapped[int] = mapped_column(Integer, primary_key=True)
+    codigo: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    estado_activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class RedSocial(Base):
+    __tablename__ = "redes_sociales"
+
+    id_red_social: Mapped[int] = mapped_column(Integer, primary_key=True)
+    plataforma: Mapped[str] = mapped_column(String(30), nullable=False)
+    nombre_pagina: Mapped[str] = mapped_column(String(150), nullable=False)
+    url_pagina: Mapped[str] = mapped_column(Text, nullable=False)
+    estado_activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
 class Personal(Base):
-    """Personal asignable a las comandas (catálogo mínimo)."""
     __tablename__ = "personal"
 
     id_personal: Mapped[int] = mapped_column(Integer, primary_key=True)
-    nombre: Mapped[str] = mapped_column(String(150), nullable=False)
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    id_area: Mapped[int] = mapped_column(Integer, ForeignKey("area_empresa.id_area"), nullable=False)
+    nombres: Mapped[str] = mapped_column(String(100), nullable=False)
+    apellidos: Mapped[str] = mapped_column(String(100), nullable=False)
+    cargo: Mapped[str] = mapped_column(String(100), nullable=False)
+    fecha_ingreso: Mapped[date] = mapped_column(Date, nullable=False)
+    estado_activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+    @property
+    def nombre(self) -> str:
+        return f"{self.nombres} {self.apellidos}".strip()
+
+    @property
+    def activo(self) -> bool:
+        return self.estado_activo
 
 
-# =============================================================
-# 1. TIPOS_BUYER
-#    Catálogo de los tipos de buyer persona que maneja el negocio
-# =============================================================
 class TipoBuyer(Base):
     __tablename__ = "tipos_buyer"
 
     id_tipo_buyer: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    nombre: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
+    codigo: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
+    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    descripcion: Mapped[Optional[str]] = mapped_column(String(250), nullable=True)
+    estado_activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    # Relación hacia buyer_personas (se completa en fases posteriores)
-    # buyer_personas: Mapped[list["BuyerPersona"]] = relationship(back_populates="tipo_buyer")
+    @property
+    def activo(self) -> bool:
+        return self.estado_activo
 
-    def __repr__(self) -> str:
-        return f"<TipoBuyer id={self.id_tipo_buyer} nombre='{self.nombre}'>"
+    @property
+    def created_at(self) -> datetime:
+        return datetime.utcnow()
+
+    @property
+    def updated_at(self) -> datetime:
+        return datetime.utcnow()
 
 
-# =============================================================
-# 2. PRODUCTOS
-#    Catálogo maestro de productos del restaurante
-# =============================================================
 class Producto(Base):
     __tablename__ = "productos"
 
     id_producto: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    nombre: Mapped[str] = mapped_column(String(150), nullable=False)
-    descripcion: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    categoria: Mapped[Optional[str]] = mapped_column(
-        # Categorías base: parrilla, bebida, entrada, postre, guarnicion, otro
-        String(50), nullable=True
-    )
-    precio_base: Mapped[Decimal] = mapped_column(
-        Numeric(10, 2), nullable=False, default=Decimal("0.00")
-    )
-    imagen_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
-    disponible: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
-    )
+    nombre: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    descripcion: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    categoria: Mapped[str] = mapped_column(String(30), nullable=False)
+    precio_base: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
+    es_gancho_promocional: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    estado_activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    imagen_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
-    def __repr__(self) -> str:
-        return f"<Producto id={self.id_producto} nombre='{self.nombre}' precio={self.precio_base}>"
+    @property
+    def disponible(self) -> bool:
+        return self.estado_activo
+
+    @disponible.setter
+    def disponible(self, value: bool) -> None:
+        self.estado_activo = value
 
 
-# =============================================================
-# 3. BUYERS
-#    Contactos captados en campañas (tope del embudo IMPULSE)
-# =============================================================
 class Buyer(Base):
     __tablename__ = "buyers"
 
-    id_buyer: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-
-    # Datos de identificación
-    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
-    apellido: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    telefono: Mapped[Optional[str]] = mapped_column(String(30), nullable=True, index=True)
-    email: Mapped[Optional[str]] = mapped_column(String(150), nullable=True, index=True)
-
-    # Canal de captación
-    canal_captacion: Mapped[Optional[str]] = mapped_column(
-        # whatsapp | facebook | instagram | web | referido | otro
-        String(50), nullable=True
+    id_buyer: Mapped[UUID] = mapped_column(
+        primary_key=True, index=True, server_default=text("gen_random_uuid()")
     )
+    id_persona: Mapped[Optional[UUID]] = mapped_column(ForeignKey("buyer_personas.id_persona"), nullable=True)
+    id_anuncio_origen: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("anuncios.id_anuncio"), nullable=True
+    )
+    id_red_social_origen: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("redes_sociales.id_red_social"), nullable=True
+    )
+    canal_captacion: Mapped[str] = mapped_column("canal_origen", String(30), nullable=False, default="OTRO")
+    estado_buyer: Mapped[str] = mapped_column(String(30), nullable=False, default="ACTIVO")
+
+    # Extensiones de la app
+    etapa_impulse: Mapped[str] = mapped_column(String(20), nullable=False, default="buyer")
+    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     utm_source: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     utm_medium: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     utm_campaign: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-
-    # Clasificación
-    id_tipo_buyer: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("tipos_buyer.id_tipo_buyer", ondelete="SET NULL"), nullable=True
-    )
-
-    # Estado en el embudo IMPULSE
-    # buyer | lead | payer | customer | turned
-    etapa_impulse: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="buyer"
-    )
-
-    # Control
-    activo: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     notas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     fecha_primer_contacto: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+
+    persona: Mapped[Optional["BuyerPersona"]] = relationship(  # type: ignore[name-defined]
+        "BuyerPersona", lazy="selectin", foreign_keys=[id_persona]
     )
 
-    # Relaciones
-    tipo_buyer: Mapped[Optional["TipoBuyer"]] = relationship(
-        "TipoBuyer", lazy="selectin"
-    )
+    # Datos de identidad que viven en buyer_personas
+    @property
+    def nombre(self) -> Optional[str]:
+        return self.persona.nombre if self.persona else None
 
-    def __repr__(self) -> str:
-        return (
-            f"<Buyer id={self.id_buyer} nombre='{self.nombre}' "
-            f"etapa='{self.etapa_impulse}'>"
-        )
+    @nombre.setter
+    def nombre(self, value: Optional[str]) -> None:
+        self._set_persona(nombre=value)
+
+    @property
+    def apellido(self) -> Optional[str]:
+        return self.persona.apellido if self.persona else None
+
+    @apellido.setter
+    def apellido(self, value: Optional[str]) -> None:
+        self._set_persona(apellido=value)
+
+    @property
+    def telefono(self) -> Optional[str]:
+        return self.persona.telefono if self.persona else None
+
+    @telefono.setter
+    def telefono(self, value: Optional[str]) -> None:
+        self._set_persona(telefono=value)
+
+    @property
+    def email(self) -> Optional[str]:
+        return self.persona.email if self.persona else None
+
+    @email.setter
+    def email(self, value: Optional[str]) -> None:
+        self._set_persona(email=value)
+
+    @property
+    def id_tipo_buyer(self) -> Optional[int]:
+        return self.persona.id_tipo_buyer if self.persona else None
+
+    def _set_persona(self, **values: object) -> None:
+        if self.persona is None:
+            from app.models.buyers_models import BuyerPersona
+
+            self.persona = BuyerPersona(**values)  # type: ignore[arg-type]
+        else:
+            for key, value in values.items():
+                setattr(self.persona, key, value)

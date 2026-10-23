@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/kit'
 
 interface ComandaItem {
-  id_servicio_detalle: number
+  id_servicio_detalle: string
   nombre_item: string
   cantidad: number
   termino_coccion?: string
@@ -38,7 +38,7 @@ interface ComandaItem {
 }
 
 interface Comanda {
-  id_servicio: number
+  id_servicio: string
   mesa_numero?: string
   prioridad: string
   estado: string
@@ -48,7 +48,7 @@ interface Comanda {
 }
 
 interface Resena {
-  id_resena: number
+  id_resena: string
   calificacion_general: number
   comentario?: string
   created_at: string
@@ -71,10 +71,10 @@ const ITEM_ESTADOS = ['pendiente', 'preparando', 'listo', 'entregado']
 const ITEM_ICONS = { pendiente: Square, preparando: Flame, listo: CheckCircle2, entregado: PackageCheck }
 
 function ComandaCard({ comanda, onActualizar }: { comanda: Comanda, onActualizar: () => void }) {
-  const [actualizando, setActualizando] = useState<number | null>(null)
+  const [actualizando, setActualizando] = useState<string | null>(null)
   const [error, setError] = useState('')
 
-  const cambiarEstadoItem = async (idItem: number, nuevoEstado: string) => {
+  const cambiarEstadoItem = async (idItem: string, nuevoEstado: string) => {
     setActualizando(idItem)
     setError('')
     try {
@@ -259,8 +259,8 @@ export default function CustomersPage() {
 
   const handleEnviarResena = async () => {
     if (enviandoResena) return
-    const servicioId = Number(resenaForm.id_servicio)
-    if (!Number.isInteger(servicioId) || servicioId <= 0 || !resenaForm.calificacion) {
+    const servicioId = resenaForm.id_servicio
+    if (!servicioId || !resenaForm.calificacion) {
       setResenaError('Introduce un ID de servicio positivo y una calificación.')
       return
     }

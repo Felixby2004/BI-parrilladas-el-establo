@@ -4,7 +4,7 @@ import { captacionService } from '@/services/api'
 import { apiErrorMessage } from '@/services/errors'
 import type { InteresLead } from '@/types'
 
-export function NewLeadDialog({ onClose, onCreated }: { onClose: () => void; onCreated: (id: number) => void }) {
+export function NewLeadDialog({ onClose, onCreated }: { onClose: () => void; onCreated: (id: string) => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')

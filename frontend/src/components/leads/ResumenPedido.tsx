@@ -18,8 +18,8 @@ import { apiErrorMessage } from '@/services/errors'
 import { StatusBadge, type Tone } from '@/components/ui/kit'
 
 interface ResumenPedidoProps {
-  idLead: number
-  idBuyer: number
+  idLead: string
+  idBuyer: string
   items: DetallePedido[]
   onItemsChange: Dispatch<SetStateAction<DetallePedido[]>>
   buyerNombre?: string
@@ -85,7 +85,7 @@ export function ResumenPedido({
   const saldo = subtotal * 0.9
 
   const handleConfirmarPedido = async () => {
-    if (items.length === 0 || !editable || idBuyer <= 0 || loadingPedido) return
+    if (items.length === 0 || !editable || !idBuyer || loadingPedido) return
     setLoadingPedido(true)
     setErrorMsg('')
     try {
@@ -246,7 +246,7 @@ export function ResumenPedido({
           <button
             type="button"
             onClick={handleConfirmarPedido}
-            disabled={loadingPedido || idBuyer <= 0}
+            disabled={loadingPedido || !idBuyer}
             className="btn-secondary w-full py-2.5 text-[11.5px]"
           >
             {loadingPedido ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-arena-100 border-t-transparent" /> : <Check size={13} />}

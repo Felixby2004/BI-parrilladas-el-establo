@@ -10,6 +10,7 @@ Flujo:
 """
 import logging
 import uuid
+from uuid import UUID
 from decimal import Decimal
 
 import mercadopago
@@ -123,6 +124,8 @@ async def generar_adelanto(
         tipo_pago="adelanto",
         porcentaje=payload.porcentaje,
         monto=monto_adelanto,
+        metodo_pago="MERCADO_PAGO",
+        estado_pago="PENDIENTE",
         estado="pendiente",
         mp_preference_id=preference_id,
         mp_external_reference=external_ref,
@@ -217,6 +220,7 @@ async def webhook_mercadopago(request: Request, db: AsyncSession = Depends(get_d
     from datetime import datetime
     if mp_status == "approved":
         pago.estado = "aprobado"
+        pago.estado_pago = "PAGADO"
         pago.fecha_pago = datetime.utcnow()
 
         # Actualizar pedido
@@ -245,10 +249,12 @@ async def webhook_mercadopago(request: Request, db: AsyncSession = Depends(get_d
 
     elif mp_status in ("rejected", "cancelled"):
         pago.estado = "rechazado"
+        pago.estado_pago = "RECHAZADO"
         logger.info(f"❌ Pago {payment_id} RECHAZADO: {mp_detail}")
 
     elif mp_status == "in_process":
         pago.estado = "en_proceso"
+        pago.estado_pago = "PENDIENTE"
 
     await db.flush()
     return {"status": "processed", "mp_status": mp_status}
@@ -256,7 +262,7 @@ async def webhook_mercadopago(request: Request, db: AsyncSession = Depends(get_d
 
 # ─── GET /pagos/{id_pago} ─────────────────────────────────────────
 @router.get("/{id_pago}", response_model=PagoRead, summary="Detalle de un pago")
-async def detalle_pago(id_pago: int, db: AsyncSession = Depends(get_db)):
+async def detalle_pago(id_pago: UUID, db: AsyncSession = Depends(get_db)):
     r = await db.execute(select(Pago).where(Pago.id_pago == id_pago))
     pago = r.scalar_one_or_none()
     if not pago:
@@ -270,7 +276,7 @@ async def detalle_pago(id_pago: int, db: AsyncSession = Depends(get_db)):
     response_model=list[PagoRead],
     summary="Pagos de un pedido",
 )
-async def pagos_por_pedido(id_pedido: int, db: AsyncSession = Depends(get_db)):
+async def pagos_por_pedido(id_pedido: UUID, db: AsyncSession = Depends(get_db)):
     r = await db.execute(
         select(Pago)
         .where(Pago.id_pedido == id_pedido)
@@ -286,7 +292,7 @@ async def pagos_por_pedido(id_pedido: int, db: AsyncSession = Depends(get_db)):
     summary="⚠️ Solo Sandbox: Simular aprobación de pago",
 )
 async def simular_aprobacion(
-    id_pago: int,
+    id_pago: UUID,
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -304,6 +310,7 @@ async def simular_aprobacion(
         raise HTTPException(404, "Pago no encontrado")
 
     pago.estado = "aprobado"
+    pago.estado_pago = "PAGADO"
     pago.mp_status = "approved"
     pago.mp_status_detail = "accredited"
     pago.mp_payment_id = f"SANDBOX-SIM-{id_pago}"

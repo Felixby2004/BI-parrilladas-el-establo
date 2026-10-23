@@ -1,301 +1,222 @@
-"""
-MODELOS FASE LEADS/NEGOCIACIÓN - PARRILLADAS EL ESTABLO
-=========================================================
-Tablas: perfil_gustos, perfil_reserva, negociacion_leads,
-        pedidos, detalle_pedido, pagos
-"""
-from datetime import datetime, date, time
+"""Modelos canónicos: perfiles, chat, pedidos y pagos."""
+from datetime import date, datetime, time
 from decimal import Decimal
 from typing import Optional
+from uuid import UUID
 
 from sqlalchemy import (
-    Integer, String, Text, Boolean, Numeric,
-    DateTime, Date, Time, ForeignKey, func,
+    BigInteger,
+    Boolean,
+    Computed,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    Time,
+    func,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
 
 
-# =============================================================
-# 1. PERFIL_GUSTOS — Preferencias gastronómicas del lead
-# =============================================================
 class PerfilGustos(Base):
     __tablename__ = "perfil_gustos"
 
-    id_perfil_gustos: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_lead: Mapped[int] = mapped_column(
-        Integer, ForeignKey("leads.id_lead", ondelete="CASCADE"),
-        nullable=False, unique=True, index=True
-    )
+    id_lead: Mapped[UUID] = mapped_column(ForeignKey("leads.id_lead"), primary_key=True)
+    id_tipo_corte: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    id_termino_coccion: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
-    # Preferencias de corte (JSON-like, ej: "ribeye,t-bone,picaña")
+    # Extensiones de la app
     tipos_corte_preferidos: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Término de cocción (inglés | tres cuartos | bien cocido | a punto)
-    termino_coccion: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
-
-    # Bebidas preferidas
+    termino_coccion: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
     bebidas_preferidas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Entradas, postres, guarniciones
     entradas_preferidas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     guarniciones_preferidas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     postres_preferidos: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Restricciones
     alergias: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    restricciones_dieteticas: Mapped[Optional[str]] = mapped_column(
-        # vegetariano | vegano | sin_gluten | sin_lactosa | ninguna
-        String(100), nullable=True
-    )
-
-    # Nivel de gasto esperado
-    presupuesto_por_persona: Mapped[Optional[Decimal]] = mapped_column(
-        Numeric(10, 2), nullable=True
-    )
-
+    restricciones_dieteticas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    presupuesto_por_persona: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
     notas_adicionales: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
-    )
-
-    lead: Mapped["Lead"] = relationship("Lead", lazy="selectin")  # type: ignore[name-defined]
-
-    def __repr__(self) -> str:
-        return f"<PerfilGustos id={self.id_perfil_gustos} lead={self.id_lead}>"
+    @property
+    def id_perfil_gustos(self) -> UUID:
+        return self.id_lead
 
 
-# =============================================================
-# 2. PERFIL_RESERVA — Detalles de la reserva confirmada
-# =============================================================
 class PerfilReserva(Base):
     __tablename__ = "perfil_reserva"
 
-    id_perfil_reserva: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_lead: Mapped[int] = mapped_column(
-        Integer, ForeignKey("leads.id_lead", ondelete="CASCADE"),
-        nullable=False, unique=True, index=True
-    )
-
-    # Cuándo
+    id_lead: Mapped[UUID] = mapped_column(ForeignKey("leads.id_lead"), primary_key=True)
     fecha_reserva: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
-    hora_inicio: Mapped[Optional[time]] = mapped_column(Time, nullable=True)
-    hora_fin: Mapped[Optional[time]] = mapped_column(Time, nullable=True)
+    hora_inicio: Mapped[Optional[time]] = mapped_column("hora_reserva", Time, nullable=True)
+    numero_personas: Mapped[Optional[int]] = mapped_column("cantidad_personas", Integer, nullable=True)
 
-    # Quiénes
-    numero_personas: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    # Extensiones de la app
+    hora_fin: Mapped[Optional[time]] = mapped_column(Time, nullable=True)
     numero_adultos: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     numero_ninos: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-
-    # Ocasión
-    ocasion_especial: Mapped[Optional[str]] = mapped_column(
-        # cumpleanos | aniversario | empresa | ninguna | otro
-        String(50), nullable=True
-    )
+    ocasion_especial: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     nombre_festejado: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
+    requiere_decoracion: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    requiere_musica: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    requiere_pastel: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    peticiones_especiales: Mapped[Optional[str]] = mapped_column("observaciones", String(300), nullable=True)
+    estado_reserva: Mapped[str] = mapped_column(String(20), nullable=False, default="tentativa")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
-    # Servicios adicionales
-    requiere_decoracion: Mapped[bool] = mapped_column(Boolean, default=False)
-    requiere_musica: Mapped[bool] = mapped_column(Boolean, default=False)
-    requiere_pastel: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    peticiones_especiales: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Estado de la reserva
-    estado_reserva: Mapped[str] = mapped_column(
-        # tentativa | confirmada | cancelada
-        String(20), nullable=False, default="tentativa"
-    )
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
-    )
-
-    lead: Mapped["Lead"] = relationship("Lead", lazy="selectin")  # type: ignore[name-defined]
+    @property
+    def id_perfil_reserva(self) -> UUID:
+        return self.id_lead
 
 
-# =============================================================
-# 3. NEGOCIACION_LEADS — Log de mensajes del chat
-# =============================================================
 class NegociacionLead(Base):
+    """Resumen de negociación por lead. Lo usa el BI, no el chat."""
+
     __tablename__ = "negociacion_leads"
 
-    id_negociacion: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_lead: Mapped[int] = mapped_column(
-        Integer, ForeignKey("leads.id_lead", ondelete="CASCADE"),
-        nullable=False, index=True
+    id_negociacion: Mapped[UUID] = mapped_column(
+        primary_key=True, server_default=text("gen_random_uuid()")
     )
+    id_lead: Mapped[UUID] = mapped_column(ForeignKey("leads.id_lead"), nullable=False, index=True)
+    resumen_cliente: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
+    historial_consumo: Mapped[Optional[str]] = mapped_column(String(300), nullable=True)
+    cantidad_interacciones: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    fecha_inicio: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    ultima_interaccion: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    estado_negociacion: Mapped[str] = mapped_column(String(20), nullable=False, default="ACTIVA")
+    resultado: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
 
-    # Quién envía: bot | agente | cliente
-    remitente: Mapped[str] = mapped_column(String(20), nullable=False, default="bot")
-    mensaje: Mapped[str] = mapped_column(Text, nullable=False)
 
-    # Metadata del mensaje
-    tipo_mensaje: Mapped[Optional[str]] = mapped_column(
-        # texto | sugerencia | pedido | pago | sistema
-        String(30), nullable=True, default="texto"
+class SesionChat(Base):
+    __tablename__ = "sesiones_chat"
+
+    id_sesion: Mapped[UUID] = mapped_column(primary_key=True, server_default=text("gen_random_uuid()"))
+    id_buyer: Mapped[UUID] = mapped_column(ForeignKey("buyers.id_buyer"), nullable=False, index=True)
+    id_lead: Mapped[Optional[UUID]] = mapped_column(ForeignKey("leads.id_lead"), nullable=True, index=True)
+    id_formulario: Mapped[Optional[UUID]] = mapped_column(
+        ForeignKey("formularios_captacion.id_formulario"), nullable=True
     )
+    numero_whatsapp_cliente: Mapped[str] = mapped_column(String(20), nullable=False)
+    fecha_inicio: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=func.now())
+    fecha_hora_ultimo_mensaje: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    fecha_abandono: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    intencion_detectada: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    estado_sesion: Mapped[str] = mapped_column(String(30), nullable=False, default="ABIERTA")
+    fecha_cierre: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
+
+class MensajeChat(Base):
+    __tablename__ = "mensajes_chat"
+
+    id_negociacion: Mapped[int] = mapped_column("id_mensaje", BigInteger, primary_key=True)
+    id_sesion: Mapped[UUID] = mapped_column(ForeignKey("sesiones_chat.id_sesion"), nullable=False, index=True)
+    id_personal: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    remitente: Mapped[str] = mapped_column("remitente_app", String(20), nullable=False, default="bot")
+    remitente_canonico: Mapped[str] = mapped_column("tipo_remitente", String(15), nullable=False, default="BOT")
+    tipo_mensaje: Mapped[str] = mapped_column("tipo_mensaje_app", String(20), nullable=True)
+    mensaje: Mapped[str] = mapped_column("mensaje_contenido", Text, nullable=False)
     metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    leido: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    fecha_hora_mensaje: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
-    leido: Mapped[bool] = mapped_column(Boolean, default=False)
+    sesion: Mapped["SesionChat"] = relationship("SesionChat", lazy="selectin")
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-
-    lead: Mapped["Lead"] = relationship("Lead")  # type: ignore[name-defined]
+    @property
+    def id_lead(self) -> Optional[UUID]:
+        return self.sesion.id_lead if self.sesion else None
 
 
-# =============================================================
-# 4. PEDIDOS — Cabecera del pedido
-# =============================================================
 class Pedido(Base):
     __tablename__ = "pedidos"
 
-    id_pedido: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_lead: Mapped[int] = mapped_column(
-        Integer, ForeignKey("leads.id_lead", ondelete="RESTRICT"),
-        nullable=False, index=True
+    id_pedido: Mapped[UUID] = mapped_column(
+        primary_key=True, index=True, server_default=text("gen_random_uuid()")
     )
-    id_buyer: Mapped[int] = mapped_column(
-        Integer, ForeignKey("buyers.id_buyer", ondelete="RESTRICT"),
-        nullable=False, index=True
-    )
+    id_lead: Mapped[UUID] = mapped_column(ForeignKey("leads.id_lead"), nullable=False, index=True)
+    tipo_consumo: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    tipo_pedido: Mapped[Optional[str]] = mapped_column("tipo_pedido_app", String(20), nullable=True)
+    estado: Mapped[str] = mapped_column("estado_impulse", String(30), nullable=False, default="pendiente")
+    estado_pedido: Mapped[str] = mapped_column(String(30), nullable=False, default="PENDIENTE")
+    total: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False, default=Decimal("0.00"))
 
-    # Montos
-    subtotal: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
-    descuento: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
-    total: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=Decimal("0.00"))
-
-    # Estado
-    estado: Mapped[str] = mapped_column(
-        # borrador | confirmado | pagado_adelanto | completado | cancelado
-        String(30), nullable=False, default="borrador"
-    )
-    tipo_pedido: Mapped[Optional[str]] = mapped_column(
-        # reserva | delivery | salon
-        String(20), nullable=True, default="reserva"
-    )
+    # Extensiones de la app
+    subtotal: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False, default=Decimal("0.00"))
+    descuento: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False, default=Decimal("0.00"))
     notas: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
     detalles: Mapped[list["DetallePedido"]] = relationship(
-        "DetallePedido", back_populates="pedido", cascade="all, delete-orphan"
+        "DetallePedido", back_populates="pedido", cascade="all, delete-orphan", lazy="selectin"
     )
     pagos: Mapped[list["Pago"]] = relationship("Pago", back_populates="pedido")
-    buyer: Mapped["Buyer"] = relationship("Buyer", lazy="selectin")  # type: ignore[name-defined]
     lead: Mapped["Lead"] = relationship("Lead", lazy="selectin")  # type: ignore[name-defined]
 
-    def __repr__(self) -> str:
-        return f"<Pedido id={self.id_pedido} total={self.total} estado='{self.estado}'>"
+    @property
+    def id_buyer(self) -> Optional[UUID]:
+        return self.lead.id_buyer if self.lead else None
 
 
-# =============================================================
-# 5. DETALLE_PEDIDO — Ítems del pedido
-# =============================================================
 class DetallePedido(Base):
     __tablename__ = "detalle_pedido"
 
-    id_detalle: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_pedido: Mapped[int] = mapped_column(
-        Integer, ForeignKey("pedidos.id_pedido", ondelete="CASCADE"),
-        nullable=False, index=True
-    )
+    id_detalle: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    id_pedido: Mapped[UUID] = mapped_column(ForeignKey("pedidos.id_pedido"), nullable=False, index=True)
     id_producto: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("productos.id_producto", ondelete="SET NULL"),
-        nullable=True
+        Integer, ForeignKey("productos.id_producto"), nullable=True
     )
-
-    # Nombre capturado en el momento del pedido (para trazabilidad)
-    nombre_producto: Mapped[str] = mapped_column(String(200), nullable=False)
-    categoria: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
-
+    nombre_producto: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    categoria: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
     cantidad: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     precio_unitario: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    subtotal: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-
-    # Personalizaciones
-    termino_coccion: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
-    notas_especiales: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
+    subtotal: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2), Computed("cantidad * precio_unitario", persisted=True)
     )
+    termino_coccion: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    notas_especiales: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
     pedido: Mapped["Pedido"] = relationship("Pedido", back_populates="detalles")
     producto: Mapped[Optional["Producto"]] = relationship("Producto", lazy="selectin")  # type: ignore[name-defined]
 
-    def __repr__(self) -> str:
-        return f"<DetallePedido id={self.id_detalle} '{self.nombre_producto}' x{self.cantidad}>"
 
-
-# =============================================================
-# 6. PAGOS — Registro de transacciones (adelanto y saldo)
-# =============================================================
 class Pago(Base):
     __tablename__ = "pagos"
 
-    id_pago: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    id_pedido: Mapped[int] = mapped_column(
-        Integer, ForeignKey("pedidos.id_pedido", ondelete="RESTRICT"),
-        nullable=False, index=True
+    id_pago: Mapped[UUID] = mapped_column(
+        primary_key=True, index=True, server_default=text("gen_random_uuid()")
     )
-    id_lead: Mapped[int] = mapped_column(
-        Integer, ForeignKey("leads.id_lead", ondelete="RESTRICT"),
-        nullable=False, index=True
-    )
-
-    # Tipo y monto
-    tipo_pago: Mapped[str] = mapped_column(
-        # adelanto | saldo | total
-        String(20), nullable=False, default="adelanto"
-    )
-    porcentaje: Mapped[Optional[Decimal]] = mapped_column(
-        Numeric(5, 2), nullable=True  # ej: 10.00 para el 10%
-    )
+    id_pedido: Mapped[UUID] = mapped_column(ForeignKey("pedidos.id_pedido"), nullable=False, index=True)
+    id_lead: Mapped[Optional[UUID]] = mapped_column(ForeignKey("leads.id_lead"), nullable=True)
+    metodo_pago: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    estado_pago: Mapped[str] = mapped_column(String(20), nullable=False, default="PENDIENTE")
     monto: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-
-    # Estado del pago
-    estado: Mapped[str] = mapped_column(
-        # pendiente | aprobado | rechazado | reembolsado | en_proceso
-        String(20), nullable=False, default="pendiente"
+    fecha_pago: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
     )
 
-    # Mercado Pago
+    # Extensiones de la app
+    tipo_pago: Mapped[str] = mapped_column(String(20), nullable=False, default="adelanto")
+    estado: Mapped[str] = mapped_column("estado_app", String(20), nullable=False, default="pendiente")
+    porcentaje: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 2), nullable=True)
     mp_preference_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
     mp_payment_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
     mp_status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     mp_status_detail: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    mp_external_reference: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    mp_external_reference: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
     mp_init_point: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-
-    # Datos del pagador
     pagador_nombre: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
     pagador_email: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
-
-    fecha_pago: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), nullable=False)
 
     pedido: Mapped["Pedido"] = relationship("Pedido", back_populates="pagos")
-
-    def __repr__(self) -> str:
-        return f"<Pago id={self.id_pago} tipo='{self.tipo_pago}' monto={self.monto} estado='{self.estado}'>"

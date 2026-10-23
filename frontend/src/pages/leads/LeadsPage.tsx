@@ -36,7 +36,7 @@ export default function LeadsPage() {
   const [notice, setNotice] = useState('')
   const [dragOver, setDragOver] = useState<EstadoLead | null>(null)
   const mutation = useMutation({
-    mutationFn: ({ id, state }: { id: number; state: EstadoLead }) => leadsService.actualizarEstado(id, state),
+    mutationFn: ({ id, state }: { id: string; state: EstadoLead }) => leadsService.actualizarEstado(id, state),
     onSuccess: updated => {
       cache.setQueryData<LeadKanban[]>(['leads', 'board'], old => old?.map(lead => lead.id_lead === updated.id_lead ? updated : lead))
       setNotice(`Lead #${updated.id_lead}: estado guardado.`)
@@ -52,9 +52,9 @@ export default function LeadsPage() {
       && (!source || (source === '__missing' ? !lead.buyer_canal : lead.buyer_canal === source))
       && (!needle || [lead.buyer_nombre, lead.buyer_telefono, lead.buyer_email, lead.id_lead, lead.campana_nombre, lead.buyer_canal].some(value => String(value ?? '').toLocaleLowerCase().includes(needle))))
       .sort((a, b) => {
-        if (sort === 'name') return (a.buyer_nombre || '').localeCompare(b.buyer_nombre || '', 'es') || a.id_lead - b.id_lead
-        if (sort === 'budget') return Number(b.presupuesto_estimado ?? -1) - Number(a.presupuesto_estimado ?? -1) || b.id_lead - a.id_lead
-        const difference = new Date(b.created_at).getTime() - new Date(a.created_at).getTime() || b.id_lead - a.id_lead
+        if (sort === 'name') return (a.buyer_nombre || '').localeCompare(b.buyer_nombre || '', 'es') || String(a.id_lead).localeCompare(String(b.id_lead))
+        if (sort === 'budget') return Number(b.presupuesto_estimado ?? -1) - Number(a.presupuesto_estimado ?? -1) || String(b.id_lead).localeCompare(String(a.id_lead))
+        const difference = new Date(b.created_at).getTime() - new Date(a.created_at).getTime() || String(b.id_lead).localeCompare(String(a.id_lead))
         return sort === 'oldest' ? -difference : difference
       })
   }, [all, search, stateFilter, interest, source, sort])
@@ -91,7 +91,7 @@ export default function LeadsPage() {
         {visible.length === 0 && <EmptyState icon={Users} title={all.length ? 'Sin coincidencias' : 'Aún no hay leads'} description={all.length ? 'Prueba con otro término o limpia los filtros.' : 'Crea el primer contacto para comenzar el seguimiento.'} action={<button onClick={all.length ? reset : () => setCreating(true)} className="btn-secondary text-xs">{all.length ? 'Limpiar búsqueda y filtros' : 'Crear lead'}</button>} />}
         {view === 'board' && <div className="flex snap-x gap-3 overflow-x-auto pb-4" aria-label="Tablero de leads">{STATES.map(state => {
           const items = visible.filter(lead => lead.estado === state.id)
-          return <section key={state.id} aria-label={`${state.label}: ${items.length} leads`} onDragOver={event => { if (!mutation.isPending) { event.preventDefault(); setDragOver(state.id) } }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setDragOver(null) }} onDrop={event => { event.preventDefault(); setDragOver(null); const id = Number(event.dataTransfer.getData('application/x-establo-lead')); const lead = all.find(item => item.id_lead === id); if (lead) changeState(lead, state.id) }} className={clsx('min-h-[350px] w-[280px] min-w-[280px] flex-1 snap-start rounded-2xl border bg-dark-800/50 p-2.5', dragOver === state.id ? 'border-gold-500/60 bg-gold-500/5' : 'border-arena-200/[0.07]')}>
+          return <section key={state.id} aria-label={`${state.label}: ${items.length} leads`} onDragOver={event => { if (!mutation.isPending) { event.preventDefault(); setDragOver(state.id) } }} onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setDragOver(null) }} onDrop={event => { event.preventDefault(); setDragOver(null); const id = event.dataTransfer.getData('application/x-establo-lead'); const lead = all.find(item => item.id_lead === id); if (lead) changeState(lead, state.id) }} className={clsx('min-h-[350px] w-[280px] min-w-[280px] flex-1 snap-start rounded-2xl border bg-dark-800/50 p-2.5', dragOver === state.id ? 'border-gold-500/60 bg-gold-500/5' : 'border-arena-200/[0.07]')}>
             <div className="mb-3 h-[3px] rounded-full" style={{ backgroundColor: state.color }} /><header className="mb-3 flex items-center justify-between px-1"><h2 className="text-xs font-semibold">{state.label}</h2><span className="rounded-md bg-arena-200/[0.07] px-2 py-0.5 text-[11px] tabular">{items.length}</span></header>
             <div className="space-y-2.5">{items.map(lead => <article key={lead.id_lead} draggable={!mutation.isPending} onDragStart={event => { event.dataTransfer.setData('application/x-establo-lead', String(lead.id_lead)); event.dataTransfer.effectAllowed = 'move' }} onDragEnd={() => setDragOver(null)} className="rounded-xl border border-arena-200/10 bg-dark-700/80 p-3 shadow-sm transition-colors hover:border-arena-200/25">
               <div className="flex items-start gap-2"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-vino-700/30 bg-vino-900/20 text-xs font-semibold text-arena-200">{(lead.buyer_nombre || 'L').charAt(0).toUpperCase()}</span><div className="min-w-0"><Link to={`/leads/${lead.id_lead}/negociacion`} className="block break-words text-[13px] font-semibold text-arena-50 hover:text-gold-300">{lead.buyer_nombre || `Lead #${lead.id_lead}`}</Link><p className="mt-0.5 text-[10px] text-arena-400">#{lead.id_lead} · {channel(lead)}</p></div></div>

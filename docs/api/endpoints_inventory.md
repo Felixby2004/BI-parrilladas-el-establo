@@ -1,0 +1,110 @@
+- `GET /api/v1/alertas`
+  - salida `AlertaRead`: atendida:boolean, created_at:string, descripcion:string, id_alerta:integer, id_servicio:integer, nivel:string, tipo_alerta:string
+- `POST /api/v1/alertas`
+  - entrada `AlertaCreate`: descripcion:string, id_servicio:integer, nivel?:string, tipo_alerta:string
+- `PATCH /api/v1/alertas/{id_alerta}/atender`
+  - salida `AlertaRead`: atendida:boolean, created_at:string, descripcion:string, id_alerta:integer, id_servicio:integer, nivel:string, tipo_alerta:string
+- `GET /api/v1/anuncios`
+  - salida `AnuncioRead`: clics:integer, copy_texto?:string|null, created_at:string, estado?:string, id_anuncio:integer, id_campana:integer, imagen_url?:string|null, impresiones:integer, plataforma?:string|null, titulo:string, updated_at:string, url_destino?:string|null
+- `POST /api/v1/anuncios`
+  - entrada `AnuncioCreate`: copy_texto?:string|null, estado?:string, id_campana:integer, imagen_url?:string|null, plataforma?:string|null, titulo:string, url_destino?:string|null
+- `DELETE /api/v1/anuncios/{id_anuncio}`
+- `PUT /api/v1/anuncios/{id_anuncio}`
+  - entrada `AnuncioUpdate`: copy_texto?:string|null, estado?:string, id_campana?:integer|null, imagen_url?:string|null, plataforma?:string|null, titulo?:string|null, url_destino?:string|null
+  - salida `AnuncioRead`: clics:integer, copy_texto?:string|null, created_at:string, estado?:string, id_anuncio:integer, id_campana:integer, imagen_url?:string|null, impresiones:integer, plataforma?:string|null, titulo:string, updated_at:string, url_destino?:string|null
+- `POST /api/v1/caja/cobrar-saldo`
+  - entrada `CobrarSaldoRequest`: id_payer:integer, monto?:number|string|null, notas?:string|null, procesado_por?:string|null, tipo_pago?:string
+- `GET /api/v1/caja/comprobante/{id_payer}`
+  - salida `ComprobanteRead`: adelanto_aplicado:string, cliente_nombre:string|null, cliente_telefono:string|null, created_at:string, descuento:string, folio:string, generado_por:string|null, id_comprobante:integer, id_payer:integer, id_pedido:integer, metodo_pago_saldo:string|null, observaciones:string|null, saldo_cobrado:string, subtotal:string, total:string
+- `GET /api/v1/campanas`
+  - salida `CampanaRead`: buyer_persona?:BuyerPersonaRead|null, created_at:string, descripcion?:string|null, estado?:string, fecha_fin?:string|null, fecha_inicio?:string|null, id_buyer_persona?:integer|null, id_campana:integer, nombre:string, objetivo?:string|null, presupuesto_gastado:string, presupuesto_total?:string|null, updated_at:string
+- `POST /api/v1/campanas`
+  - entrada `CampanaCreate`: descripcion?:string|null, estado?:string, fecha_fin?:string|null, fecha_inicio?:string|null, id_buyer_persona?:integer|null, nombre:string, objetivo?:string|null, presupuesto_total?:number|string|null
+- `DELETE /api/v1/campanas/{id_campana}`
+- `GET /api/v1/campanas/{id_campana}`
+  - salida `CampanaRead`: buyer_persona?:BuyerPersonaRead|null, created_at:string, descripcion?:string|null, estado?:string, fecha_fin?:string|null, fecha_inicio?:string|null, id_buyer_persona?:integer|null, id_campana:integer, nombre:string, objetivo?:string|null, presupuesto_gastado:string, presupuesto_total?:string|null, updated_at:string
+- `PUT /api/v1/campanas/{id_campana}`
+  - entrada `CampanaUpdate`: descripcion?:string|null, estado?:string, fecha_fin?:string|null, fecha_inicio?:string|null, id_buyer_persona?:integer|null, nombre?:string|null, objetivo?:string|null, presupuesto_total?:number|string|null
+  - salida `CampanaRead`: buyer_persona?:BuyerPersonaRead|null, created_at:string, descripcion?:string|null, estado?:string, fecha_fin?:string|null, fecha_inicio?:string|null, id_buyer_persona?:integer|null, id_campana:integer, nombre:string, objetivo?:string|null, presupuesto_gastado:string, presupuesto_total?:string|null, updated_at:string
+- `POST /api/v1/captacion/formulario`
+  - entrada `FormularioCaptacionCreate`: canal?:string|null, email?:string|null, fecha_preferida?:string|null, interes?:string, mensaje?:string|null, nombre:string, personas_aproximadas?:integer|null, telefono:string, utm_campaign?:string|null, utm_medium?:string|null, utm_source?:string|null
+- `GET /api/v1/captacion/formularios`
+  - salida `FormularioCaptacionRead`: buyer?:BuyerRead|null, canal:string|null, email:string|null, fecha_captacion:string, fecha_preferida:string|null, id_formulario:integer, interes:string|null, mensaje:string|null, nombre:string, personas_aproximadas:integer|null, procesado:boolean, telefono:string|null
+- `GET /api/v1/creativos/configuracion`
+- `POST /api/v1/creativos/generar`
+  - entrada `CreativeRequest`: formato?:string, llamada_accion?:string, prompt:string, texto_publicitario?:string
+  - salida `CreativeResponse`: advertencia?:string, alto:integer, ancho:integer, brief:string, formato:string, imagen_base64:string, mime_type:string, modelo:string, proveedor?:string, texto:string
+- `POST /api/v1/integraciones/hermes/mensajes`
+  - entrada `HermesMensajeCreate`: direccion?:string, mensaje:string, message_id:string, nombre?:string|null, remitente?:string, telefono:string
+- `GET /api/v1/leads`
+  - salida `LeadKanbanRead`: buyer_canal?:string|null, buyer_email?:string|null, buyer_nombre?:string|null, buyer_telefono?:string|null, campana_nombre?:string|null, created_at:string, estado:string, fecha_preferida:string|null, id_lead:integer, interes_confirmado:string|null, notas:string|null, personas_estimadas:integer|null, presupuesto_estimado:string|null
+- `GET /api/v1/leads/stats`
+  - salida `KanbanStats`: contactado?:integer, ganado?:integer, nuevo?:integer, perdido?:integer, respondio?:integer, total?:integer
+- `DELETE /api/v1/leads/{id_lead}`
+- `GET /api/v1/leads/{id_lead}`
+  - salida `LeadRead`: buyer?:BuyerRead|null, campana?:CampanaRead|null, created_at:string, estado?:string, fecha_contacto:string|null, fecha_preferida?:string|null, fecha_respuesta:string|null, id_buyer:integer, id_campana?:integer|null, id_formulario:integer|null, id_lead:integer, interes_confirmado?:string|null, motivo_perdida?:string|null, notas?:string|null, personas_estimadas?:integer|null, presupuesto_estimado?:string|null, updated_at:string
+- `PATCH /api/v1/leads/{id_lead}/estado`
+  - entrada `LeadUpdateEstado`: estado:string, motivo_perdida?:string|null, notas?:string|null
+  - salida `LeadKanbanRead`: buyer_canal?:string|null, buyer_email?:string|null, buyer_nombre?:string|null, buyer_telefono?:string|null, campana_nombre?:string|null, created_at:string, estado:string, fecha_preferida:string|null, id_lead:integer, interes_confirmado:string|null, notas:string|null, personas_estimadas:integer|null, presupuesto_estimado:string|null
+- `GET /api/v1/mesas`
+  - salida `MesaRead`: activa?:boolean, capacidad?:integer, created_at:string, descripcion?:string|null, estado?:string, id_mesa:integer, numero:string, sector?:string|null, updated_at:string
+- `POST /api/v1/mesas`
+  - entrada `MesaCreate`: activa?:boolean, capacidad?:integer, descripcion?:string|null, estado?:string, numero:string, sector?:string|null
+- `PATCH /api/v1/mesas/{id_mesa}/estado`
+  - salida `MesaRead`: activa?:boolean, capacidad?:integer, created_at:string, descripcion?:string|null, estado?:string, id_mesa:integer, numero:string, sector?:string|null, updated_at:string
+- `POST /api/v1/pagos/adelanto`
+  - entrada `GenerarAdelanto`: id_pedido:integer, pagador_email?:string|null, pagador_nombre?:string|null, porcentaje?:number|string, url_retorno?:string|null
+- `GET /api/v1/pagos/pedido/{id_pedido}`
+  - salida `PagoRead`: created_at:string, estado:string, fecha_pago:string|null, id_lead:integer, id_pago:integer, id_pedido:integer, monto:string, mp_init_point:string|null, mp_payment_id:string|null, mp_preference_id:string|null, mp_status:string|null, porcentaje:string|null, tipo_pago:string
+- `POST /api/v1/pagos/simular-aprobacion`
+  - salida `PagoRead`: created_at:string, estado:string, fecha_pago:string|null, id_lead:integer, id_pago:integer, id_pedido:integer, monto:string, mp_init_point:string|null, mp_payment_id:string|null, mp_preference_id:string|null, mp_status:string|null, porcentaje:string|null, tipo_pago:string
+- `POST /api/v1/pagos/webhook`
+- `GET /api/v1/pagos/{id_pago}`
+  - salida `PagoRead`: created_at:string, estado:string, fecha_pago:string|null, id_lead:integer, id_pago:integer, id_pedido:integer, monto:string, mp_init_point:string|null, mp_payment_id:string|null, mp_preference_id:string|null, mp_status:string|null, porcentaje:string|null, tipo_pago:string
+- `GET /api/v1/payers`
+  - salida `PayerRead`: buyer_nombre?:string|null, buyer_telefono?:string|null, created_at:string, estado:string, fecha_llegada:string|null, fecha_pago_saldo:string|null, id_buyer:integer, id_lead:integer, id_mesa:integer|null, id_payer:integer, id_pedido:integer, mesa_numero?:string|null, monto_adelanto_pagado:string, monto_saldo:string, notas:string|null, total_pedido:string, updated_at:string
+- `POST /api/v1/payers`
+  - entrada `PayerCreate`: id_buyer:integer, id_lead:integer, id_mesa?:integer|null, id_pedido:integer, monto_adelanto_pagado?:number|string, monto_saldo?:number|string, notas?:string|null, total_pedido?:number|string
+- `PATCH /api/v1/payers/{id_payer}`
+  - entrada `PayerUpdate`: estado?:string|null, id_mesa?:integer|null, notas?:string|null
+  - salida `PayerRead`: buyer_nombre?:string|null, buyer_telefono?:string|null, created_at:string, estado:string, fecha_llegada:string|null, fecha_pago_saldo:string|null, id_buyer:integer, id_lead:integer, id_mesa:integer|null, id_payer:integer, id_pedido:integer, mesa_numero?:string|null, monto_adelanto_pagado:string, monto_saldo:string, notas:string|null, total_pedido:string, updated_at:string
+- `GET /api/v1/pedidos`
+  - salida `PedidoRead`: created_at:string, descuento:string, detalles?:array, estado:string, id_buyer:integer, id_lead:integer, id_pedido:integer, notas:string|null, subtotal:string, tipo_pedido:string|null, total:string, updated_at:string
+- `POST /api/v1/pedidos`
+  - entrada `PedidoCreate`: detalles:array, id_buyer:integer, id_lead:integer, notas?:string|null, tipo_pedido?:string
+- `DELETE /api/v1/pedidos/{id_pedido}`
+- `GET /api/v1/pedidos/{id_pedido}`
+  - salida `PedidoRead`: created_at:string, descuento:string, detalles?:array, estado:string, id_buyer:integer, id_lead:integer, id_pedido:integer, notas:string|null, subtotal:string, tipo_pedido:string|null, total:string, updated_at:string
+- `PATCH /api/v1/pedidos/{id_pedido}`
+  - entrada `PedidoUpdate`: detalles?:array|null, estado?:string|null, notas?:string|null
+  - salida `PedidoRead`: created_at:string, descuento:string, detalles?:array, estado:string, id_buyer:integer, id_lead:integer, id_pedido:integer, notas:string|null, subtotal:string, tipo_pedido:string|null, total:string, updated_at:string
+- `POST /api/v1/perfiles/chat`
+  - entrada `NegociacionCreate`: id_lead:integer, mensaje:string, metadata_json?:string|null, remitente?:string, tipo_mensaje?:string
+- `GET /api/v1/perfiles/chat/{id_lead}`
+  - salida `NegociacionRead`: created_at:string, id_lead:integer, id_negociacion:integer, leido:boolean, mensaje:string, remitente:string, tipo_mensaje:string|null
+- `POST /api/v1/perfiles/gustos`
+  - entrada `PerfilGustosCreate`: alergias?:string|null, bebidas_preferidas?:string|null, entradas_preferidas?:string|null, guarniciones_preferidas?:string|null, id_lead:integer, notas_adicionales?:string|null, postres_preferidos?:string|null, presupuesto_por_persona?:number|string|null, restricciones_dieteticas?:string|null, termino_coccion?:string|null, tipos_corte_preferidos?:string|null
+- `GET /api/v1/perfiles/gustos/{id_lead}`
+  - salida `PerfilGustosRead`: alergias?:string|null, bebidas_preferidas?:string|null, created_at:string, entradas_preferidas?:string|null, guarniciones_preferidas?:string|null, id_lead:integer, id_perfil_gustos:integer, notas_adicionales?:string|null, postres_preferidos?:string|null, presupuesto_por_persona?:string|null, restricciones_dieteticas?:string|null, termino_coccion?:string|null, tipos_corte_preferidos?:string|null, updated_at:string
+- `POST /api/v1/perfiles/reserva`
+  - entrada `PerfilReservaCreate`: estado_reserva?:string, fecha_reserva?:string|null, hora_fin?:string|null, hora_inicio?:string|null, id_lead:integer, nombre_festejado?:string|null, numero_adultos?:integer|null, numero_ninos?:integer|null, numero_personas?:integer|null, ocasion_especial?:string|null, peticiones_especiales?:string|null, requiere_decoracion?:boolean, requiere_musica?:boolean, requiere_pastel?:boolean
+- `GET /api/v1/perfiles/reserva/{id_lead}`
+  - salida `PerfilReservaRead`: created_at:string, estado_reserva?:string, fecha_reserva?:string|null, hora_fin?:string|null, hora_inicio?:string|null, id_lead:integer, id_perfil_reserva:integer, nombre_festejado?:string|null, numero_adultos?:integer|null, numero_ninos?:integer|null, numero_personas?:integer|null, ocasion_especial?:string|null, peticiones_especiales?:string|null, requiere_decoracion?:boolean, requiere_musica?:boolean, requiere_pastel?:boolean, updated_at:string
+- `GET /api/v1/perfiles/{id_lead}/360`
+  - salida `Perfil360Read`: buyer_canal?:string|null, buyer_email?:string|null, buyer_etapa?:string|null, buyer_nombre?:string|null, buyer_telefono?:string|null, estado_lead:string, id_lead:integer, mensajes_recientes?:array, pago_adelanto?:PagoRead|null, pedido_activo?:PedidoRead|null, perfil_gustos?:PerfilGustosRead|null, perfil_reserva?:PerfilReservaRead|null
+- `GET /api/v1/resenas`
+  - salida `ResenaRead`: calificacion_ambiente?:integer|null, calificacion_comida?:integer|null, calificacion_general:integer, calificacion_precio?:integer|null, calificacion_servicio?:integer|null, comentario?:string|null, created_at:string, id_buyer?:integer|null, id_resena:integer, id_servicio:integer, publicar:boolean, recomendaria?:boolean|null
+- `POST /api/v1/resenas`
+  - entrada `ResenaCreate`: calificacion_ambiente?:integer|null, calificacion_comida?:integer|null, calificacion_general:integer, calificacion_precio?:integer|null, calificacion_servicio?:integer|null, comentario?:string|null, id_buyer?:integer|null, id_servicio:integer, recomendaria?:boolean|null
+- `GET /api/v1/servicios`
+  - salida `ServicioRead`: created_at:string, detalles?:array, estado:string, hora_fin:string|null, hora_inicio:string|null, id_mesa:integer|null, id_payer:integer, id_servicio:integer, mesa_numero?:string|null, notas_cocina:string|null, prioridad:string, updated_at:string
+- `POST /api/v1/servicios`
+  - entrada `ServicioCreate`: detalles:array, id_mesa?:integer|null, id_payer:integer, notas_cocina?:string|null, prioridad?:string
+- `GET /api/v1/servicios/cocina`
+  - salida `ComandaCocinaRead`: created_at:string, estado:string, id_servicio:integer, items:array, mesa_numero:string|null, prioridad:string, tiempo_espera_min:integer|null
+- `PATCH /api/v1/servicios/{id_servicio}/estado`
+  - salida `ServicioRead`: created_at:string, detalles?:array, estado:string, hora_fin:string|null, hora_inicio:string|null, id_mesa:integer|null, id_payer:integer, id_servicio:integer, mesa_numero?:string|null, notas_cocina:string|null, prioridad:string, updated_at:string
+- `PATCH /api/v1/servicios/{id_servicio}/items/{id_item}`
+  - entrada `ActualizarItemEstado`: estado_item:string
+  - salida `ServicioDetalleRead`: cantidad?:integer, created_at:string, estado_item:string, id_detalle_pedido?:integer|null, id_servicio:integer, id_servicio_detalle:integer, nombre_item:string, notas_cocina?:string|null, prioridad?:integer, termino_coccion?:string|null, tiempo_preparacion_min?:integer|null, updated_at:string
+- `GET /health`

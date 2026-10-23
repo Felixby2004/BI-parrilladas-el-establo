@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from uuid import UUID
 
 
 def normalizar_telefono(value: str) -> str:
@@ -64,7 +65,7 @@ class HermesMensajeCreate(BaseModel):
 class HermesMensajeRead(BaseModel):
     message_id: str
     duplicado: bool
-    id_buyer: int
-    id_lead: int
+    id_buyer: UUID
+    id_lead: UUID
     id_negociacion: int
     created_at: datetime

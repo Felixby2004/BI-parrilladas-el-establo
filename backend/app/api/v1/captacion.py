@@ -9,14 +9,39 @@ from sqlalchemy import select
 
 from app.db.database import get_db
 from app.models.base_models import Buyer
-from app.models.buyers_models import FormularioCaptacion, Lead
+from app.models.buyers_models import BuyerPersona, FormularioCaptacion, Lead
 from app.schemas.buyers_schemas import (
     FormularioCaptacionCreate,
     FormularioCaptacionResponse,
     FormularioCaptacionRead,
 )
 
-router = APIRouter(prefix="/captacion", tags=["📋 Captación Pública"])
+router = APIRouter(prefix="/captacion", tags=["📥 Captación Pública"])
+
+# El esquema canónico tiene CHECK en canal_origen e interes_principal.
+CANAL_CANONICO = {
+    "web": "WEB",
+    "whatsapp": "WHATSAPP_DIRECTO",
+    "instagram": "RED_SOCIAL_ORGANICO",
+    "facebook": "RED_SOCIAL_ORGANICO",
+    "tiktok": "RED_SOCIAL_ORGANICO",
+    "referido": "REFERIDO",
+}
+INTERES_CANONICO = {
+    "reserva": "RESERVA_MESA",
+    "evento": "RESERVA_MESA",
+    "informacion": "CARTA_BEBIDAS",
+    "consulta": "OTRO",
+    "otro": "OTRO",
+}
+
+
+def canal_canonico(value: str | None) -> str:
+    return CANAL_CANONICO.get((value or "").lower(), "OTRO")
+
+
+def interes_canonico(value: str | None) -> str:
+    return INTERES_CANONICO.get((value or "").lower(), "OTRO")
 
 
 @router.post(
@@ -32,22 +57,22 @@ async def registrar_formulario(
 ):
     # 1. Buscar si ya existe un buyer con ese teléfono o email
     buyer = None
+    persona_filter = None
     if payload.telefono:
-        result = await db.execute(
-            select(Buyer).where(Buyer.telefono == payload.telefono).limit(2)
-        )
-        matches = result.scalars().all()
-        if len(matches) > 1:
-            raise HTTPException(409, "Hay varios buyers con ese teléfono; requiere revisión")
-        buyer = matches[0] if matches else None
+        persona_filter = BuyerPersona.telefono == payload.telefono
+    elif payload.email:
+        persona_filter = BuyerPersona.email == payload.email
 
-    if buyer is None and payload.email:
+    if persona_filter is not None:
         result = await db.execute(
-            select(Buyer).where(Buyer.email == payload.email).limit(2)
+            select(Buyer)
+            .join(BuyerPersona, Buyer.id_persona == BuyerPersona.id_buyer_persona)
+            .where(persona_filter)
+            .limit(2)
         )
         matches = result.scalars().all()
         if len(matches) > 1:
-            raise HTTPException(409, "Hay varios buyers con ese email; requiere revisión")
+            raise HTTPException(409, "Hay varios buyers con ese contacto; requiere revisión")
         buyer = matches[0] if matches else None
 
     # 2. Crear buyer si no existe
@@ -58,7 +83,7 @@ async def registrar_formulario(
             apellido=nombre_parts[1] if len(nombre_parts) > 1 else None,
             telefono=payload.telefono,
             email=payload.email,
-            canal_captacion=payload.canal or "web",
+            canal_captacion=canal_canonico(payload.canal or "web"),
             utm_source=payload.utm_source,
             utm_medium=payload.utm_medium,
             utm_campaign=payload.utm_campaign,
@@ -66,14 +91,13 @@ async def registrar_formulario(
             fecha_primer_contacto=datetime.utcnow().date(),
         )
         db.add(buyer)
-        await db.flush()  # Obtener id_buyer sin commit
+        await db.flush()
 
     # 3. Registrar el formulario
     formulario = FormularioCaptacion(
         id_buyer=buyer.id_buyer,
         nombre=payload.nombre,
         telefono=payload.telefono,
-        email=payload.email,
         interes=payload.interes,
         mensaje=payload.mensaje,
         personas_aproximadas=payload.personas_aproximadas,
@@ -86,16 +110,27 @@ async def registrar_formulario(
     db.add(formulario)
     await db.flush()
 
-    # 4. Crear el Lead en estado "nuevo"
-    lead = Lead(
-        id_buyer=buyer.id_buyer,
-        id_formulario=formulario.id_formulario,
-        estado="nuevo",
-        interes_confirmado="consulta" if payload.interes == "informacion" else payload.interes,
-        personas_estimadas=payload.personas_aproximadas,
-        fecha_preferida=payload.fecha_preferida,
-    )
-    db.add(lead)
+    # 4. Crear o actualizar el Lead. El esquema canónico exige un lead por buyer.
+    result = await db.execute(select(Lead).where(Lead.id_buyer == buyer.id_buyer))
+    lead = result.scalar_one_or_none()
+    interes_app = "consulta" if payload.interes == "informacion" else payload.interes
+    if lead is None:
+        lead = Lead(
+            id_buyer=buyer.id_buyer,
+            id_formulario=formulario.id_formulario,
+            estado="nuevo",
+            interes_principal=interes_canonico(payload.interes),
+            interes_confirmado=interes_app,
+            personas_estimadas=payload.personas_aproximadas,
+            fecha_preferida=payload.fecha_preferida,
+        )
+        db.add(lead)
+    else:
+        lead.id_formulario = formulario.id_formulario
+        lead.interes_principal = interes_canonico(payload.interes)
+        lead.interes_confirmado = interes_app
+        lead.personas_estimadas = payload.personas_aproximadas
+        lead.fecha_preferida = payload.fecha_preferida
     await db.flush()
 
     # 5. Actualizar etapa del buyer
@@ -107,7 +142,7 @@ async def registrar_formulario(
         id_formulario=formulario.id_formulario,
         id_buyer=buyer.id_buyer,
         id_lead=lead.id_lead,
-        mensaje="¡Gracias! Nos pondremos en contacto contigo muy pronto. 🔥",
+        mensaje="¡Gracias! Nos pondremos en contacto contigo muy pronto.",
     )
 
 

@@ -11,20 +11,20 @@ import type {
 
 // ─── Perfil 360 ───────────────────────────────────────────────────
 export const perfilesService = {
-  getPerfil360: (id_lead: number) =>
+  getPerfil360: (id_lead: string) =>
     api.get<Perfil360>(`/perfiles/${id_lead}/360`).then(r => r.data),
 
-  upsertGustos: (data: Partial<PerfilGustos> & { id_lead: number }) =>
+  upsertGustos: (data: Partial<PerfilGustos> & { id_lead: string }) =>
     api.post<PerfilGustos>('/perfiles/gustos', data).then(r => r.data),
 
-  upsertReserva: (data: Partial<PerfilReserva> & { id_lead: number }) =>
+  upsertReserva: (data: Partial<PerfilReserva> & { id_lead: string }) =>
     api.post<PerfilReserva>('/perfiles/reserva', data).then(r => r.data),
 
   // Chat
-  getChat: (id_lead: number) =>
+  getChat: (id_lead: string) =>
     api.get<MensajeChat[]>(`/perfiles/chat/${id_lead}`).then(r => r.data),
 
-  enviarMensaje: (id_lead: number, mensaje: string, remitente: 'bot'|'agente'|'cliente' = 'cliente') =>
+  enviarMensaje: (id_lead: string, mensaje: string, remitente: 'bot'|'agente'|'cliente' = 'cliente') =>
     api.post<MensajeChat>('/perfiles/chat', { id_lead, mensaje, remitente, tipo_mensaje: 'texto' }).then(r => r.data),
 }
 
@@ -33,16 +33,16 @@ export const pedidosService = {
   crear: (data: any) =>
     api.post<Pedido>('/pedidos', data).then(r => r.data),
 
-  actualizar: (id: number, data: any) =>
+  actualizar: (id: string, data: any) =>
     api.patch<Pedido>(`/pedidos/${id}`, data).then(r => r.data),
 
-  getPorLead: (id_lead: number) =>
+  getPorLead: (id_lead: string) =>
     api.get<Pedido[]>('/pedidos', { params: { id_lead } }).then(r => r.data),
 }
 
 // ─── Pagos / Mercado Pago ─────────────────────────────────────────
 export const pagosService = {
-  generarAdelanto: (id_pedido: number, pagador_nombre?: string, pagador_email?: string) =>
+  generarAdelanto: (id_pedido: string, pagador_nombre?: string, pagador_email?: string) =>
     api.post<MPPreferenceResponse>('/pagos/adelanto', {
       id_pedido,
       porcentaje: 10,
@@ -51,9 +51,9 @@ export const pagosService = {
       url_retorno: `${window.location.origin}/leads`,
     }).then(r => r.data),
 
-  simularAprobacion: (id_pago: number) =>
+  simularAprobacion: (id_pago: string) =>
     api.post<PagoInfo>(`/pagos/simular-aprobacion?id_pago=${id_pago}`).then(r => r.data),
 
-  getPaymentsByPedido: (id_pedido: number) =>
+  getPaymentsByPedido: (id_pedido: string) =>
     api.get<PagoInfo[]>(`/pagos/pedido/${id_pedido}`).then(r => r.data),
 }

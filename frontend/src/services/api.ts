@@ -22,7 +22,7 @@ export const captacionService = {
 
 // ─── Leads ───────────────────────────────────────────────
 export const leadsService = {
-  detalle: (id: number) =>
+  detalle: (id: string) =>
     api.get<LeadDetalle>(`/leads/${id}`).then(r => r.data),
 
   listar: (estado?: string) =>
@@ -41,10 +41,10 @@ export const leadsService = {
   stats: () =>
     api.get<KanbanStats>('/leads/stats').then(r => r.data),
 
-  actualizarEstado: (id: number, estado: string, notas?: string) =>
+  actualizarEstado: (id: string, estado: string, notas?: string) =>
     api.patch<LeadKanban>(`/leads/${id}/estado`, { estado, notas }).then(r => r.data),
 
-  eliminar: (id: number) =>
+  eliminar: (id: string) =>
     api.delete(`/leads/${id}`),
 }
 

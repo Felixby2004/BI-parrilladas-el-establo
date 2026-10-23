@@ -1,8 +1,8 @@
 // Tipos adicionales — Fase Leads/Negociación
 
 export interface PerfilGustos {
-  id_perfil_gustos: number
-  id_lead: number
+  id_perfil_gustos: string
+  id_lead: string
   tipos_corte_preferidos?: string
   termino_coccion?: string
   bebidas_preferidas?: string
@@ -18,8 +18,8 @@ export interface PerfilGustos {
 }
 
 export interface PerfilReserva {
-  id_perfil_reserva: number
-  id_lead: number
+  id_perfil_reserva: string
+  id_lead: string
   fecha_reserva?: string
   hora_inicio?: string
   hora_fin?: string
@@ -39,7 +39,7 @@ export interface PerfilReserva {
 
 export interface MensajeChat {
   id_negociacion: number
-  id_lead: number
+  id_lead: string
   remitente: 'bot' | 'agente' | 'cliente'
   mensaje: string
   tipo_mensaje?: string
@@ -49,7 +49,7 @@ export interface MensajeChat {
 
 export interface DetallePedido {
   id_detalle?: number
-  id_pedido?: number
+  id_pedido?: string
   id_producto?: number
   nombre_producto: string
   categoria?: string
@@ -61,9 +61,9 @@ export interface DetallePedido {
 }
 
 export interface Pedido {
-  id_pedido: number
-  id_lead: number
-  id_buyer: number
+  id_pedido: string
+  id_lead: string
+  id_buyer: string
   subtotal: number
   descuento: number
   total: number
@@ -76,9 +76,9 @@ export interface Pedido {
 }
 
 export interface PagoInfo {
-  id_pago: number
-  id_pedido: number
-  id_lead: number
+  id_pago: string
+  id_pedido: string
+  id_lead: string
   tipo_pago: string
   porcentaje?: number
   monto: number
@@ -92,7 +92,7 @@ export interface PagoInfo {
 }
 
 export interface Perfil360 {
-  id_lead: number
+  id_lead: string
   estado_lead: string
   buyer_nombre?: string
   buyer_telefono?: string
@@ -107,7 +107,7 @@ export interface Perfil360 {
 }
 
 export interface MPPreferenceResponse {
-  id_pago: number
+  id_pago: string
   preference_id: string
   init_point: string
   monto_adelanto: number

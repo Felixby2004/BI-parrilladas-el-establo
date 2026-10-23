@@ -32,9 +32,9 @@ import {
 } from '@/components/ui/kit'
 
 interface PayerRow {
-  id_payer: number
-  id_pedido: number
-  id_lead: number
+  id_payer: string
+  id_pedido: string
+  id_lead: string
   estado: string
   buyer_nombre?: string
   buyer_telefono?: string
@@ -246,7 +246,7 @@ export default function PayersPage() {
   const [mesas, setMesas] = useState<Mesa[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [cobrando, setCobrando] = useState<number | null>(null)
+  const [cobrando, setCobrando] = useState<string | null>(null)
   const [metodoPago, setMetodoPago] = useState('mercado_pago')
   const [comprobante, setComprobante] = useState<Comprobante | null>(null)
   const [activeTab, setActiveTab] = useState<'caja' | 'mesas'>(() =>

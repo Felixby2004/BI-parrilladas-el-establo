@@ -80,7 +80,7 @@ El flujo HTTP de PostgreSQL usa rollback: no deja clientes ni cobros de prueba e
 
 ## Despliegue (Dokploy)
 
-El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, frontend Nginx y SQL Server para BI. El frontend escucha en el puerto 80 y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS. El único servicio publicado por Traefik es `web` (labels + red `dokploy-network`); `mssql` es la excepción con loopback para el túnel SSH.
+El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18 (OLTP + mart), API FastAPI y frontend Nginx. El frontend escucha en el puerto 80 y redirige `/api` al backend, así que la API y la interfaz comparten origen y no necesitan CORS. El único servicio publicado por Traefik es `web` (labels + red `dokploy-network`); `mssql` es la excepción con loopback para el túnel SSH.
 
 1. Crear una aplicación de tipo **Compose** en Dokploy y apuntar al repositorio; archivo de compose: `docker-compose.dokploy.yml`.
 2. Copiar `.env.production.example` a `.env` en el servidor (o cargar las variables en la UI de Dokploy):
@@ -98,35 +98,32 @@ El despliegue usa `docker-compose.dokploy.yml`: PostgreSQL 18, API FastAPI, fron
 
 Notas:
 
-- Los datos viven en el volumen `pg18_data` (el antiguo `postgres_data` tenía datos legacy de Postgres 15 y no es compatible con 18; se conserva como respaldo). Programar respaldos con `docker exec <db> pg_dump -U $POSTGRES_USER $POSTGRES_DB > respaldo.sql`.
+- Los datos viven en el volumen `pg18_data` (el antiguo `postgres_data` tenía datos legacy de Postgres 15 y no es compatible con 18; se conserva como respaldo). Programar respaldos con `docker exec establo_db_oltp pg_dump -U $POSTGRES_USER $POSTGRES_DB > respaldo.sql`.
 - No se incluye pgAdmin en producción (el `docker-compose.yml` local lo mantiene).
 - No ejecutar `seeds/seed_leads.py` en producción: carga contactos de demostración.
 - `ENVIRONMENT=production` desactiva `create_all` y el endpoint `simular-aprobacion`; el esquema lo controla Alembic.
 
-## SQL Server para BI (mismo stack, Dokploy)
+## Base de datos canónica (OLTP + mart)
 
-El esquema `db/oltp_elestablo_v1.sql` es T-SQL para SQL Server y corre en el servicio `mssql` del mismo `docker-compose.dokploy.yml`. No reemplaza al PostgreSQL 18 del servicio `db`.
+El esquema transaccional es el de SQL Server, portado a PostgreSQL en
+`db/postgres/oltp/` (41 tablas + `hermes_mensajes`, PK UUID donde el origen la
+tenía). El mart dimensional está en `db/postgres/mart/` y lee el OLTP por
+`postgres_fdw`.
 
-1. Cargar `MSSQL_SA_PASSWORD` en el entorno de Dokploy, junto a las demás variables. Debe tener 8+ caracteres con mayúscula, minúscula, número y símbolo, o el contenedor no arranca. Si contiene `$`, escaparlo como `$$`.
-2. Desplegar. El contenedor escucha en `127.0.0.1:1433` del host, no en la IP pública.
-3. Importar el esquema una sola vez (el script es idempotente):
+- `db_oltp` (5433 local): esquema canónico + datos demo.
+- `db_mart` (5434 local): 35 tablas dimensionales.
 
-   ```bash
-   docker compose exec mssql bash -c \
-     '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -f 65001 -i /scripts/oltp_elestablo_v1.sql'
-   ```
+Verificación de contrato y endpoints:
 
-   `-f 65001` es obligatorio: el archivo es UTF-8 sin BOM y sin eso se corrompen los acentos.
+```powershell
+cd backend
+.\.venv\Scripts\python.exe scripts\check_api_contract.py
+$env:DATABASE_URL="postgresql+asyncpg://postgres:test@127.0.0.1:55432/establo_oltp"
+.\.venv\Scripts\python.exe scripts\check_endpoints.py
+```
 
-4. Conectar desde fuera con túnel SSH: `ssh -L 1433:127.0.0.1:1433 root@vmi3492739` y apuntar la herramienta BI o SSMS a `localhost,1433` con usuario `sa`.
-
-Notas:
-
-- RAM: el contenedor está limitado a 2 GB (`MSSQL_MEMORY_LIMIT_MB`). SQL Server no arranca con menos de 2 GB.
-- Edición `Developer`: gratis, sin límite de tamaño, pero sin licencia para producción comercial. Para uso interno de BI es válida.
-- Los datos viven en el volumen `mssql_data`. Respaldo: `docker compose exec mssql bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "BACKUP DATABASE database_parrilla TO DISK = N\"/var/opt/mssql/backup/parrilla.bak\""'`.
-- El servicio no tiene dominio asignado ni puerto público: el acceso es solo por túnel (`127.0.0.1:1433` en el host). Es la única excepción a la regla de no mapear puertos en Dokploy.
-- `MSSQL_SA_PASSWORD` solo se aplica al inicializar el volumen. Cambiarla después no altera la contraseña existente.
+Pendiente: portar el ETL de `db/sqlserver/4_*.sql` y `5_*.sql` (dimensiones y
+15 hechos) a PostgreSQL. El DDL del mart y la conexión FDW ya están listos.
 
 ## Configuración y límites
 

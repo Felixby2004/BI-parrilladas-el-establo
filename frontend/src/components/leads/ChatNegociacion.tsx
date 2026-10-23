@@ -21,7 +21,7 @@ import { CATALOGO_MOCK } from '@/types/leads'
 import { perfilesService } from '@/services/leadsService'
 
 interface ChatNegociacionProps {
-  idLead: number
+  idLead: string
   buyerNombre: string
   mensajes: MensajeChat[]
   onMensajeEnviado: () => void

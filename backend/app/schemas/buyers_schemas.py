@@ -6,6 +6,7 @@ from datetime import datetime, date
 from decimal import Decimal
 from typing import Optional, Literal
 from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
+from uuid import UUID
 
 
 # ─────────────────────────────────────────
@@ -44,7 +45,7 @@ class BuyerPersonaUpdate(BuyerPersonaBase):
 
 class BuyerPersonaRead(BuyerPersonaBase):
     model_config = ConfigDict(from_attributes=True)
-    id_buyer_persona: int
+    id_buyer_persona: UUID
     created_at: datetime
     updated_at: datetime
     tipo_buyer: Optional[TipoBuyerRead] = None
@@ -64,7 +65,7 @@ class CampanaBase(BaseModel):
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
     estado: EstadoCampana = "borrador"
-    id_buyer_persona: Optional[int] = None
+    id_buyer_persona: Optional[UUID] = None
 
 
 class CampanaCreate(CampanaBase):
@@ -124,7 +125,7 @@ class AnuncioRead(AnuncioBase):
 # ─────────────────────────────────────────
 class BuyerRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_buyer: int
+    id_buyer: UUID
     nombre: str
     apellido: Optional[str] = None
     telefono: Optional[str] = None
@@ -172,15 +173,15 @@ class FormularioCaptacionCreate(BaseModel):
 
 class FormularioCaptacionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_formulario: int
-    id_buyer: Optional[int]
-    id_lead: Optional[int]
+    id_formulario: UUID
+    id_buyer: Optional[UUID]
+    id_lead: Optional[UUID]
     mensaje: str = "¡Gracias! Nos pondremos en contacto contigo pronto."
 
 
 class FormularioCaptacionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id_formulario: int
+    id_formulario: UUID
     nombre: str
     telefono: Optional[str]
     email: Optional[str]
@@ -201,7 +202,7 @@ EstadoLead = Literal["nuevo", "contactado", "respondio", "ganado", "perdido"]
 
 
 class LeadBase(BaseModel):
-    id_buyer: int
+    id_buyer: UUID
     id_campana: Optional[int] = None
     estado: EstadoLead = "nuevo"
     interes_confirmado: Optional[Literal["reserva", "evento", "consulta", "otro"]] = None
@@ -224,15 +225,15 @@ class LeadUpdateEstado(BaseModel):
 
 
 class LeadUpdate(LeadBase):
-    id_buyer: Optional[int] = None
+    id_buyer: Optional[UUID] = None
 
 
 class LeadRead(LeadBase):
     # Compatibilidad con formularios históricos guardados antes de normalizar.
     interes_confirmado: Optional[Literal["reserva", "evento", "consulta", "informacion", "otro"]] = None
     model_config = ConfigDict(from_attributes=True)
-    id_lead: int
-    id_formulario: Optional[int]
+    id_lead: UUID
+    id_formulario: Optional[UUID]
     fecha_contacto: Optional[datetime]
     fecha_respuesta: Optional[datetime]
     created_at: datetime
@@ -244,7 +245,7 @@ class LeadRead(LeadBase):
 class LeadKanbanRead(BaseModel):
     """Vista resumida para las tarjetas Kanban."""
     model_config = ConfigDict(from_attributes=True)
-    id_lead: int
+    id_lead: UUID
     estado: str
     interes_confirmado: Optional[str]
     personas_estimadas: Optional[int]
